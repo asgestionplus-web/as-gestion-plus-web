@@ -302,11 +302,11 @@
                 <div class="text-center pt-2 font-bold text-[10px] text-black tracking-widest">USUARIO</div>
             </div>
 
-            <!-- BOTONES DE ACCIÓN (Imprimir PC / Enviar WhatsApp Móvil) -->
+            <!-- BOTONES DE ACCIÓN (Imprimir PC / Enviar WhatsApp con número fijo 3206272940) -->
             <div class="mt-3 flex justify-between items-center space-x-2">
                 <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition">🖨️ Imprimir (PC)</button>
                 <button onclick="sendReceiptWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1.5">
-                    <span>💬 Enviar por WhatsApp</span>
+                    <span>💬 Enviar por WhatsApp (3206272940)</span>
                 </button>
             </div>
         </div>
@@ -430,7 +430,7 @@
                         </div>
                         <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
                             <button onclick='window.editClientEncoded("${clientStr}")' class="bg-amber-500 hover:bg-amber-400 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Editar</button>
-                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Recibo PDF / Wp</button>
+                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Generar Recibo</button>
                         </div>
                     </div>
                 `;
@@ -506,7 +506,7 @@
             document.getElementById('receiptModal').classList.add('hidden');
         };
 
-        // Función para enviar el recibo redactado limpiamente por WhatsApp
+        // Función para enviar el recibo por WhatsApp al número fijo 3206272940
         window.sendReceiptWhatsApp = function() {
             if (!currentReceiptClient) return;
             const c = currentReceiptClient;
@@ -532,14 +532,11 @@
             msg += `• *TOTAL PAGADO: $ ${valorFmt}*\n\n`;
             msg += `✅ _¡Gracias por confiar en nuestros servicios!_`;
 
-            // Limpiar número de celular por si tiene espacios o prefijos
-            let phone = (c.celular || '').replace(/\D/g, '');
-            if (phone.length === 10 && !phone.startsWith('57')) {
-                phone = '57' + phone; // Formato Colombia por defecto si aplica
-            }
+            // Número fijo configurado: 3206272940 (con prefijo 57 para Colombia)
+            const phone = '573206272940';
 
             const encodedMsg = encodeURIComponent(msg);
-            const waUrl = phone ? `https://wa.me/${phone}?text=${encodedMsg}` : `https://wa.me/?text=${encodedMsg}`;
+            const waUrl = `https://wa.me/${phone}?text=${encodedMsg}`;
             window.open(waUrl, '_blank');
         };
 
