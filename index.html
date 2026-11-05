@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A&S Gestión Clientes - Salud</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: { colors: { primary: '#1e3a8a', accent: '#3b82f6' } }
+            }
+        }
+    </script>
+
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Failsafe CSS Nativo Embebido -->
+    <style>
+        .view-section { display: none !important; }
+        .view-active { display: block !important; }
+        body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .fail-safe-box { border: 1px solid #334155; background: #1e293b; border-radius: 0.5rem; padding: 1.5rem; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <svg width="28" height="28" style="min-width:28px; min-height:28px;" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            <span class="font-bold text-lg text-white">A&S Gestión Salud</span>
+        </div>
+        <nav id="mainNav" class="flex space-x-2">
+            <button onclick="switchView('view-clientes')" class="px-3 py-1.5 rounded bg-slate-800 text-sm hover:bg-slate-700 transition">Clientes</button>
+            <button onclick="switchView('view-registro')" class="px-3 py-1.5 rounded bg-slate-800 text-sm hover:bg-slate-700 transition">Nuevo</button>
+            <button onclick="switchView('view-admin')" class="px-3 py-1.5 rounded bg-blue-600 text-sm hover:bg-blue-500 transition">Admin</button>
+        </nav>
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="flex-grow p-4 max-w-5xl mx-auto w-full">
+
+        <!-- 1. VISTA LISTADO Y EDICIÓN -->
+        <section id="view-clientes" class="view-section view-active space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <h2 class="text-xl font-bold">Listado de Afiliados</h2>
+                <button onclick="seedDatabase()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded text-xs font-semibold transition">🚀 Precargar los 15 Clientes del Sistema</button>
+            </div>
+            <div class="relative">
+                <input type="text" id="searchClient" placeholder="Buscar por cédula o nombre..." class="w-full bg-slate-800 border border-slate-700 rounded px-4 py-2 text-sm focus:outline-none focus:border-blue-500" onkeyup="filterClients()">
+            </div>
+            <div id="clientsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+
+        <!-- 2. VISTA REGISTRO / EDICIÓN -->
+        <section id="view-registro" class="view-section fail-safe-box space-y-4">
+            <h2 id="formTitle" class="text-xl font-bold border-b border-slate-700 pb-2">Registrar Nuevo Cliente</h2>
+            <form id="clientForm" onsubmit="saveClient(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <label class="block text-slate-400 mb-1">Cédula</label>
+                    <input type="text" id="reg-cedula" required class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Nombre Completo</label>
+                    <input type="text" id="reg-nombre" required class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Fecha de Nacimiento</label>
+                    <input type="text" id="reg-fnac" placeholder="YYYY-MM-DD" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Celular</label>
+                    <input type="text" id="reg-celular" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Correo Electrónico</label>
+                    <input type="email" id="reg-correo" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Dirección</label>
+                    <input type="text" id="reg-direccion" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="ARMENIA">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">E.P.S.</label>
+                    <input type="text" id="reg-eps" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="SURA">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Fondo de Pensiones (AFP)</label>
+                    <input type="text" id="reg-pension" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="N/A">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">A.R.L.</label>
+                    <input type="text" id="reg-arl" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="POSITIVA">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Tipo de Servicio</label>
+                    <select id="reg-tipo" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                        <option value="Solo Salud">Solo Salud</option>
+                        <option value="Todo">Todo</option>
+                    </select>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-slate-400 mb-1">Valor a Pagar ($)</label>
+                    <input type="number" id="reg-valor" required class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="122222">
+                </div>
+                <div class="sm:col-span-2 flex justify-between space-x-3 pt-2">
+                    <button type="button" onclick="resetForm()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded font-semibold text-white transition">Cancelar / Nuevo</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-semibold text-white transition">Guardar Cliente</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 3. VISTA PANEL ADMIN -->
+        <section id="view-admin" class="view-section fail-safe-box space-y-4">
+            <h2 class="text-xl font-bold border-b border-slate-700 pb-2">Panel Administrativo</h2>
+            <div id="adminLogin" class="space-y-3">
+                <p class="text-sm text-slate-400">Inicie sesión para acceder a funciones administrativas (bloqueo por inactividad 15 min).</p>
+                <input type="email" id="adminEmail" placeholder="Correo admin" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+                <input type="password" id="adminPassword" placeholder="Contraseña" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm">
+                <button onclick="adminLogin()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm w-full font-semibold">Iniciar Sesión</button>
+            </div>
+            <div id="adminDashboard" class="hidden space-y-4">
+                <div class="flex justify-between items-center bg-slate-900 p-3 rounded">
+                    <span class="text-sm text-emerald-400 font-medium">● Sesión Activa (Inactividad 15m)</span>
+                    <button onclick="adminLogout()" class="bg-rose-600 hover:bg-rose-500 px-3 py-1 rounded text-xs">Cerrar Sesión</button>
+                </div>
+                <p class="text-sm text-slate-300">Panel seguro operativo conectado con Firestore.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE RECIBO PDF -->
+    <div id="receiptModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-2 overflow-y-auto">
+        <div class="bg-white text-slate-900 w-full max-w-2xl rounded p-6 relative shadow-2xl my-8">
+            <button onclick="closeReceiptModal()" class="absolute top-3 right-3 text-slate-500 hover:text-black font-bold text-lg">✕</button>
+            
+            <div id="receiptContent" class="border-2 border-slate-800 p-4 bg-white text-xs space-y-3">
+                <div class="flex justify-between items-start border-b border-slate-400 pb-3">
+                    <div>
+                        <h1 class="font-bold text-sm text-blue-900">A&S GESTION COMERCIAL PLUS SAS</h1>
+                        <p class="text-[10px]">NIT.902.028.894-1</p>
+                        <p class="text-[10px]">Cel. 3235536049</p>
+                        <p class="text-[10px] text-blue-700">E- Mail: asgestionplus@gmail.com</p>
+                    </div>
+                    <div class="border border-slate-400 p-1 w-48 text-[10px]">
+                        <div class="flex justify-between border-b border-slate-300 pb-0.5"><span>Recibo No.</span><span id="rc-consecutivo" class="font-bold">0001</span></div>
+                        <div class="flex justify-between pt-0.5"><span>Fecha Recibo</span><span id="rc-fecha">2026-03-04</span></div>
+                    </div>
+                </div>
+
+                <div class="border border-slate-400 p-2 space-y-1">
+                    <p class="font-bold text-[11px] text-slate-700">Datos del Cliente</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>Asociado: <span id="rc-nombre" class="font-semibold uppercase"></span></div>
+                        <div>Identidad: <span id="rc-cedula" class="font-semibold"></span></div>
+                        <div>Dirección: <span id="rc-direccion">ARMENIA</span></div>
+                        <div>Ciudad: <span class="font-semibold">ARMENIA</span></div>
+                        <div>Tipo de Afiliado: <span class="font-semibold uppercase">ASOCIADO</span></div>
+                        <div>Teléfono / Cel: <span id="rc-celular"></span></div>
+                    </div>
+                </div>
+
+                <div class="border border-slate-400 p-2 space-y-1">
+                    <p class="font-bold text-[11px] text-slate-700">Datos Cotización</p>
+                    <table class="w-full border-collapse border border-slate-300 text-center text-[10px]">
+                        <tr class="bg-slate-100">
+                            <th class="border border-slate-300 p-1">Administradora</th>
+                            <th class="border border-slate-300 p-1">Periodo Cot.</th>
+                            <th class="border border-slate-300 p-1">Servicio</th>
+                            <th class="border border-slate-300 p-1">Dias</th>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-300 p-1 text-left">E.P.S: <span id="rc-eps"></span></td>
+                            <td rowspan="3" class="border border-slate-300 p-1 font-bold uppercase" id="rc-mes">MARZO</td>
+                            <td rowspan="3" class="border border-slate-300 p-1" id="rc-tipo-serv">202603</td>
+                            <td rowspan="3" class="border border-slate-300 p-1">30</td>
+                        </tr>
+                        <tr><td class="border border-slate-300 p-1 text-left">A.F.P: <span id="rc-pension">N/A</span></td></tr>
+                        <tr><td class="border border-slate-300 p-1 text-left">A.R.L: <span id="rc-arl">POSITIVA</span> 1</td></tr>
+                        <tr>
+                            <td colspan="2" class="border border-slate-300 p-1 text-left font-bold">I.B.C</td>
+                            <td colspan="2" class="border border-slate-300 p-1 text-right font-bold">$ 1.750.905</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="border border-slate-400 p-2 space-y-1">
+                    <p class="font-bold text-[11px] text-slate-700">Detalle Recibo</p>
+                    <table class="w-full border-collapse border border-slate-300 text-[10px]">
+                        <tr class="bg-slate-100">
+                            <th class="border border-slate-300 p-1 text-left">Concepto</th>
+                            <th class="border border-slate-300 p-1 text-right w-32">Valor</th>
+                        </tr>
+                        <tr>
+                            <td class="border border-slate-300 p-1 uppercase" id="rc-concepto">APORTES SEGURIDAD SOCIAL MARZO</td>
+                            <td class="border border-slate-300 p-1 text-right" id="rc-valor1">$ 0</td>
+                        </tr>
+                        <tr style="height: 24px;"><td class="border border-slate-300"></td><td class="border border-slate-300"></td></tr>
+                    </table>
+                    <div class="flex justify-between items-center font-bold pt-1">
+                        <span>FORMA DE PAGO</span>
+                        <div class="flex space-x-4"><span>TOTAL</span> <span id="rc-total">$ 0</span></div>
+                    </div>
+                </div>
+                <div class="text-center pt-2 font-bold text-[10px] text-slate-600">USUARIO</div>
+            </div>
+
+            <div class="mt-4 flex justify-end space-x-2">
+                <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-xs font-semibold">Descargar Recibo PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 border-t border-slate-800 text-center py-3 text-xs text-slate-500">
+        A&S Gestión Comercial Plus SAS © 2026 - PWA Resiliente
+    </footer>
+
+    <!-- SCRIPTS FIREBASE (SDK v13.2.0 Modular) Y LÓGICA -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5-Q3I0GhRIj1X_fyY6Lpb4jQ2BNA4MoI",
+            authDomain: "as-gestion-plus.firebaseapp.com",
+            projectId: "as-gestion-plus",
+            storageBucket: "as-gestion-plus.firebasestorage.app",
+            messagingSenderId: "951066644882",
+            appId: "1:951066644882:web:af4bba6ac1b99f5689314b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const TELEGRAM_BOT_TOKEN = "TU_BOT_TOKEN";
+        const TELEGRAM_CHAT_ID = "TU_CHAT_ID";
+
+        async function sendTelegramNotification(message) {
+            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.includes("TU_")) return;
+            try {
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+            } catch (err) { console.error("Error Telegram:", err); }
+        }
+
+        window.switchView = function(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('view-active');
+                el.style.setProperty('display', 'none', 'important');
+            });
+            const target = document.getElementById(viewId);
+            if (target) {
+                target.classList.add('view-active');
+                target.style.setProperty('display', 'block', 'important');
+            }
+            if(viewId === 'view-clientes') loadClients();
+        };
+
+        flatpickr("#reg-fnac", { dateFormat: "Y-m-d", theme: "dark" });
+
+        // Precarga de los 15 Clientes
+        window.seedDatabase = async function() {
+            const initialClients = [
+                { cedula: "42102471", nombre: "YINET GRAJALES PODADA" },
+                { cedula: "1098310554", nombre: "JUAN DAVID URREA ACEVEDO" },
+                { cedula: "18399239", nombre: "YOUBER ALVEIRO SUAREZ VELASCO" },
+                { cedula: "4377217", nombre: "JOHN JAIBER MONTAÑA HURTADO" },
+                { cedula: "6192965", nombre: "ARMANDO OCAMPO OSPINA" },
+                { cedula: "41893692", nombre: "MARIA DOLLY GUTIERREZ GONZALEZ" },
+                { cedula: "14984639", nombre: "MARCO ANTONIO RAMIREZ" },
+                { cedula: "31345015", nombre: "FLOR MARINA RAMIREZ OSPINA" },
+                { cedula: "25201908", nombre: "ROSALBA CARDONA RAMIREZ" },
+                { cedula: "51815433", nombre: "MARIA EUGENIA MARTINEZ" },
+                { cedula: "1094893230", nombre: "PAOLA RIOS" },
+                { cedula: "1096032854", nombre: "MARIANA JURADO" },
+                { cedula: "7547237", nombre: "JORGE ELIECER BUITRAGO FLOREZ" },
+                { cedula: "31131140", nombre: "MAGNOLIA REBOLLEDO" },
+                { cedula: "41930687", nombre: "ALBA LIGIA DE LA CRUZ" }
+            ];
+
+            try {
+                const batch = writeBatch(db);
+                initialClients.forEach(c => {
+                    const docRef = doc(db, "clientes", c.cedula);
+                    batch.set(docRef, {
+                        cedula: c.cedula,
+                        nombre: c.nombre,
+                        f_nac: "1990-01-01",
+                        celular: "3000000000",
+                        correo: "afiliado@example.com",
+                        direccion: "ARMENIA",
+                        eps: "SURA",
+                        pension: "N/A",
+                        arl: "POSITIVA",
+                        tipo: "Solo Salud",
+                        valor: 122222,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                });
+                await batch.commit();
+                alert("¡Se han precargado los 15 clientes correctamente! Ya puedes editarlos.");
+                loadClients();
+            } catch (e) {
+                alert("Error al precargar: " + e.message);
+            }
+        };
+
+        window.saveClient = async function(e) {
+            e.preventDefault();
+            const cedula = document.getElementById('reg-cedula').value.trim();
+            const clientData = {
+                cedula: cedula,
+                nombre: document.getElementById('reg-nombre').value.trim(),
+                f_nac: document.getElementById('reg-fnac').value.trim(),
+                celular: document.getElementById('reg-celular').value.trim(),
+                correo: document.getElementById('reg-correo').value.trim(),
+                direccion: document.getElementById('reg-direccion').value.trim(),
+                eps: document.getElementById('reg-eps').value.trim(),
+                pension: document.getElementById('reg-pension').value.trim(),
+                arl: document.getElementById('reg-arl').value.trim(),
+                tipo: document.getElementById('reg-tipo').value,
+                valor: parseFloat(document.getElementById('reg-valor').value) || 0,
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                await setDoc(doc(db, "clientes", cedula), clientData, { merge: true });
+                sendTelegramNotification(`🚨 *Cliente Guardado/Editado*\n👤 ${clientData.nombre}\n🆔 ${cedula}\n💰 $${clientData.valor}`);
+                alert("Cliente guardado correctamente.");
+                window.resetForm();
+                window.switchView('view-clientes');
+            } catch (err) {
+                alert("Error al guardar: " + err.message);
+            }
+        };
+
+        let allClientsCache = [];
+        async function loadClients() {
+            const container = document.getElementById('clientsContainer');
+            container.innerHTML = '<p class="text-sm text-slate-400">Cargando clientes...</p>';
+            try {
+                const querySnapshot = await getDocs(collection(db, "clientes"));
+                allClientsCache = [];
+                querySnapshot.forEach(docSnap => allClientsCache.push(docSnap.data()));
+                renderClients(allClientsCache);
+            } catch (e) {
+                container.innerHTML = `<p class="text-sm text-rose-400">Error al cargar: ${e.message}</p>`;
+            }
+        }
+
+        function renderClients(clients) {
+            const container = document.getElementById('clientsContainer');
+            if (clients.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-400">No hay clientes registrados.</p>';
+                return;
+            }
+            container.innerHTML = clients.map(c => `
+                <div class="bg-slate-800 border border-slate-700 rounded p-4 flex flex-col justify-between space-y-2">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-white text-base">${c.nombre}</h3>
+                            <span class="text-xs bg-blue-900 text-blue-200 px-2 py-0.5 rounded">${c.tipo}</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Cédula: ${c.cedula} | Cel: ${c.celular}</p>
+                        <p class="text-xs text-slate-400">EPS: ${c.eps || 'N/A'} | Dirección: ${c.direccion || 'ARMENIA'}</p>
+                        <p class="text-sm font-semibold text-emerald-400 mt-2">Valor: $${c.valor.toLocaleString()}</p>
+                    </div>
+                    <div class="flex justify-end space-x-2 pt-2 border-t border-slate-700">
+                        <button onclick='window.editClient(${JSON.stringify(c)})' class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1 rounded text-xs font-medium">Editar</button>
+                        <button onclick='window.openReceipt(${JSON.stringify(c)})' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-xs font-medium">Recibo PDF</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.filterClients = function() {
+            const query = document.getElementById('searchClient').value.toLowerCase();
+            const filtered = allClientsCache.filter(c => c.nombre.toLowerCase().includes(query) || c.cedula.includes(query));
+            renderClients(filtered);
+        };
+
+        window.editClient = function(c) {
+            document.getElementById('reg-cedula').value = c.cedula;
+            document.getElementById('reg-cedula').readOnly = true;
+            document.getElementById('reg-nombre').value = c.nombre || '';
+            document.getElementById('reg-fnac').value = c.f_nac || '';
+            document.getElementById('reg-celular').value = c.celular || '';
+            document.getElementById('reg-correo').value = c.correo || '';
+            document.getElementById('reg-direccion').value = c.direccion || 'ARMENIA';
+            document.getElementById('reg-eps').value = c.eps || 'SURA';
+            document.getElementById('reg-pension').value = c.pension || 'N/A';
+            document.getElementById('reg-arl').value = c.arl || 'POSITIVA';
+            document.getElementById('reg-tipo').value = c.tipo || 'Solo Salud';
+            document.getElementById('reg-valor').value = c.valor || 122222;
+            document.getElementById('formTitle').innerText = "Editar Cliente: " + c.nombre;
+            window.switchView('view-registro');
+        };
+
+        window.resetForm = function() {
+            document.getElementById('clientForm').reset();
+            document.getElementById('reg-cedula').readOnly = false;
+            document.getElementById('formTitle').innerText = "Registrar Nuevo Cliente";
+        };
+
+        window.openReceipt = function(client) {
+            document.getElementById('rc-consecutivo').innerText = "0001";
+            document.getElementById('rc-fecha').innerText = new Date().toLocaleDateString();
+            document.getElementById('rc-nombre').innerText = client.nombre;
+            document.getElementById('rc-cedula').innerText = client.cedula;
+            document.getElementById('rc-direccion').innerText = client.direccion || "ARMENIA";
+            document.getElementById('rc-celular').innerText = client.celular || "";
+            document.getElementById('rc-eps').innerText = client.eps || "N/A";
+            document.getElementById('rc-pension').innerText = client.pension || "N/A";
+            document.getElementById('rc-arl').innerText = client.arl || "POSITIVA";
+            document.getElementById('rc-tipo-serv').innerText = client.cedula.slice(-6);
+            document.getElementById('rc-concepto').innerText = `APORTES SEGURIDAD SOCIAL - ${client.nombre.toUpperCase()}`;
+            document.getElementById('rc-valor1').innerText = `$ ${client.valor.toLocaleString()}`;
+            document.getElementById('rc-total').innerText = `$ ${client.valor.toLocaleString()}`;
+            document.getElementById('receiptModal').classList.remove('hidden');
+        };
+
+        window.closeReceiptModal = function() {
+            document.getElementById('receiptModal').classList.add('hidden');
+        };
+
+        window.downloadPDF = function() {
+            const element = document.getElementById('receiptContent');
+            const opt = {
+                margin: 5,
+                filename: `Recibo_Afiliacion_${document.getElementById('rc-cedula').innerText}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        };
+
+        let inactivityTimer;
+        function resetAdminTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                signOut(auth);
+                document.getElementById('adminDashboard').classList.add('hidden');
+                document.getElementById('adminLogin').classList.remove('hidden');
+            }, 15 * 60 * 1000);
+        }
+
+        window.adminLogin = async function() {
+            const email = document.getElementById('adminEmail').value;
+            const pass = document.getElementById('adminPassword').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                document.getElementById('adminLogin').classList.add('hidden');
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                ['mousemove', 'keypress', 'click', 'touchstart'].forEach(evt => window.addEventListener(evt, resetAdminTimer));
+                resetAdminTimer();
+            } catch (e) { alert("Error: " + e.message); }
+        };
+
+        window.adminLogout = async function() {
+            await signOut(auth);
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('adminLogin').classList.remove('hidden');
+            clearTimeout(inactivityTimer);
+        };
+
+        window.onload = () => { window.switchView('view-clientes'); };
+    </script>
+</body>
+</html>
