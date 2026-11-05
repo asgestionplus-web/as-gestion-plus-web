@@ -50,11 +50,11 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- HEADER / NAVEGACIÓN (Estilo Salud / Fondo Blanco & Azul Corporativo) -->
+    <!-- HEADER / NAVEGACIÓN (Estilo Sector Salud - Fondo Blanco & Azul Corporativo) -->
     <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 px-6 py-3 flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <!-- Logotipo Oficial Incorporado en el Header -->
-            <img src="710123.jpg" alt="A&S Logo" class="h-10 w-auto object-contain">
+            <!-- Logotipo Oficial Embebido -->
+            <img src="710123.jpg" alt="A&S Logo" class="h-10 w-auto object-contain bg-white">
             <div>
                 <span class="font-bold text-base text-slate-800 block">A&S GESTIÓN PLUS</span>
                 <span class="text-[10px] text-slate-500 tracking-wider">GESTIONA TU BIENESTAR</span>
@@ -162,18 +162,18 @@
 
     </main>
 
-    <!-- MODAL DE RECIBO PDF (PLANTILLA IDÉNTICA A LA IMAGEN Proporcionada) -->
+    <!-- MODAL DE RECIBO PDF (PLANTILLA IDÉNTICA A LA IMAGEN) -->
     <div id="receiptModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 overflow-y-auto">
         <div class="bg-white w-full max-w-3xl rounded-xl p-4 relative shadow-2xl my-8">
             <button onclick="closeReceiptModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 font-bold text-lg">✕</button>
             
-            <!-- ÁREA DE IMPRESIÓN (Estructura idéntica a tu plantilla de Excel / Screenshot) -->
+            <!-- ÁREA DE IMPRESIÓN (Estructura idéntica a la plantilla) -->
             <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-2 border-black p-4 text-xs space-y-2">
                 
-                <!-- Encabezado -->
+                <!-- Encabezado con Logo Embebido Directo -->
                 <div class="flex justify-between items-start border-b-2 border-black pb-3">
                     <div class="flex items-center space-x-3">
-                        <img src="710123.jpg" alt="Logo" class="h-14 w-auto object-contain">
+                        <img src="710123.jpg" alt="Logo" class="h-14 w-auto object-contain bg-white">
                         <div>
                             <h1 class="font-bold text-sm text-black uppercase">A&S GESTION COMERCIAL PLUS SAS</h1>
                             <p class="text-[11px] font-semibold text-black">NIT.902.028.894-1</p>
@@ -275,7 +275,7 @@
                 <button onclick="downloadPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition">🖨️ Generar / Descargar PDF Oficial</button>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- FOOTER -->
     <footer class="bg-white border-t border-slate-200 text-center py-3 text-xs text-slate-500">
