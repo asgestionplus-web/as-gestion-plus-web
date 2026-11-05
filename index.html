@@ -24,7 +24,7 @@
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- Librerías Profesionales para Generar PDF Real (jsPDF & html2canvas) -->
+    <!-- Librerías para Generar PDF Real (jsPDF & html2canvas) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -37,10 +37,10 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- HEADER / NAVEGACIÓN -->
-    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 px-6 py-2 flex justify-between items-center">
+    <!-- HEADER / NAVEGACIÓN Y LOGIN ADMIN SUPERIOR -->
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 px-6 py-2 flex flex-col sm:flex-row justify-between items-center gap-2">
         <div class="flex items-center space-x-3">
-            <svg viewBox="0 0 220 70" class="h-12 w-auto">
+            <svg viewBox="0 0 220 70" class="h-10 w-auto">
                 <defs>
                     <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style="stop-color:#0284c7;stop-opacity:1" />
@@ -55,18 +55,58 @@
                 <text x="65" y="48" font-family="Arial, sans-serif" font-weight="normal" font-size="9" letter-spacing="1.5" fill="#64748b">GESTIONA TU BIENESTAR</text>
             </svg>
         </div>
-        <nav id="mainNav" class="flex space-x-2">
-            <button onclick="switchView('view-clientes')" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-medium text-sm hover:bg-sky-50 hover:text-sky-600 transition">Clientes</button>
-            <button onclick="switchView('view-registro')" class="px-4 py-2 rounded-lg bg-sky-600 text-white font-medium text-sm hover:bg-sky-500 transition shadow-sm">+ Nuevo</button>
-            <button onclick="switchView('view-admin')" class="px-4 py-2 rounded-lg bg-slate-800 text-white font-medium text-sm hover:bg-slate-700 transition">Admin</button>
-        </nav>
+
+        <!-- BARRA DE ACCESO RÁPIDO ADMIN EN EL HEADER -->
+        <div id="headerAdminContainer" class="flex items-center space-x-2">
+            <div id="headerLoginArea" class="flex items-center space-x-1.5">
+                <input type="email" id="quickAdminEmail" placeholder="Correo admin" class="bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs text-slate-800 w-28">
+                <input type="password" id="quickAdminPass" placeholder="Contraseña" class="bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs text-slate-800 w-24">
+                <button onclick="adminLoginQuick()" class="bg-slate-800 hover:bg-slate-700 text-white px-2.5 py-1 rounded text-xs font-medium">Entrar</button>
+            </div>
+            <div id="headerLoggedArea" class="hidden flex items-center space-x-2">
+                <span class="text-xs text-emerald-600 font-bold">● Admin</span>
+                <button onclick="switchView('view-clientes')" class="px-3 py-1 rounded bg-slate-100 text-slate-700 font-medium text-xs hover:bg-sky-50 transition">Clientes</button>
+                <button onclick="switchView('view-registro')" class="px-3 py-1 rounded bg-sky-600 text-white font-medium text-xs hover:bg-sky-500 transition">+ Nuevo</button>
+                <button onclick="adminLogout()" class="bg-rose-600 hover:bg-rose-500 text-white px-2.5 py-1 rounded text-xs">Salir</button>
+            </div>
+        </div>
     </header>
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-grow p-4 max-w-5xl mx-auto w-full">
 
-        <!-- 1. VISTA LISTADO Y EDICIÓN -->
-        <section id="view-clientes" class="view-section view-active space-y-4">
+        <!-- 0. VISTA PÚBLICA / PRESENTACIÓN INICIAL (Sin mostrar información sensible) -->
+        <section id="view-inicio" class="view-section view-active space-y-6">
+            <div class="bg-gradient-to-r from-sky-600 to-teal-600 text-white p-8 rounded-2xl shadow-lg space-y-4">
+                <h1 class="text-3xl font-extrabold tracking-tight">Tu Bienestar y Protección al Día</h1>
+                <p class="text-sky-100 text-sm sm:text-base max-w-2xl leading-relaxed">
+                    Estar afiliado a la seguridad social no es solo un requisito legal, es la garantía de tranquilidad para ti y tu familia ante cualquier imprevisto médico, laboral o de futuro. Mantén tus aportes al día y asegura atención oportuna y protección integral.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                    <div class="text-sky-600 font-bold text-lg">🏥 Salud (EPS)</div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Garantiza el acceso a servicios médicos, hospitalarios, medicamentos y consultas sin sobresaltos financieros.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                    <div class="text-teal-600 font-bold text-lg">🛡️ Riesgos (ARL)</div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Protección y cobertura inmediata ante accidentes laborales o enfermedades profesionales en el ejercicio de tu labor.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-2">
+                    <div class="text-amber-600 font-bold text-lg">📈 Pensión (AFP)</div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Construye tu futuro económico y el de tus seres queridos asegurando una vejez protegida y estable.</p>
+                </div>
+            </div>
+
+            <div class="bg-sky-50 border border-sky-200 p-6 rounded-xl text-center space-y-3">
+                <h3 class="font-bold text-sky-900 text-base">¿Eres afiliado y necesitas gestionar tus comprobantes?</h3>
+                <p class="text-xs text-sky-700">Utiliza las credenciales de administración en la parte superior para acceder al sistema interno de gestión de clientes y recibos.</p>
+            </div>
+        </section>
+
+        <!-- 1. VISTA LISTADO Y EDICIÓN (Protegida) -->
+        <section id="view-clientes" class="view-section space-y-4">
             <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Directorio de Afiliados</h2>
@@ -137,21 +177,15 @@
             </form>
         </section>
 
-        <!-- 3. VISTA PANEL ADMIN -->
+        <!-- 3. VISTA PANEL ADMIN GENERAL -->
         <section id="view-admin" class="view-section fail-safe-box space-y-4">
             <h2 class="text-lg font-bold text-slate-800 border-b border-slate-200 pb-2">Panel Administrativo</h2>
-            <div id="adminLogin" class="space-y-3">
-                <p class="text-sm text-slate-600">Inicie sesión para acceder a funciones administrativas (bloqueo por inactividad de 15 min).</p>
-                <input type="email" id="adminEmail" placeholder="Correo admin" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800">
-                <input type="password" id="adminPassword" placeholder="Contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800">
-                <button onclick="adminLogin()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-lg text-sm w-full font-medium shadow-sm">Iniciar Sesión</button>
-            </div>
-            <div id="adminDashboard" class="hidden space-y-4">
+            <div class="space-y-4">
                 <div class="flex justify-between items-center bg-sky-50 border border-sky-200 p-3 rounded-lg">
                     <span class="text-sm text-sky-800 font-medium">● Sesión Activa (Inactividad 15m)</span>
                     <button onclick="adminLogout()" class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1 rounded text-xs font-medium">Cerrar Sesión</button>
                 </div>
-                <p class="text-sm text-slate-600">Panel seguro operativo conectado con Firestore.</p>
+                <p class="text-sm text-slate-600">Panel seguro operativo conectado con Firestore. Utilice las pestañas superiores para navegar.</p>
             </div>
         </section>
 
@@ -272,13 +306,13 @@
                 <div class="text-center pt-3 font-bold text-[11px] text-black tracking-widest">USUARIO</div>
             </div>
 
-            <!-- BOTONES DE ACCIÓN (Descargar PDF Real + Enviar WhatsApp con número 3206272940) -->
-            <div class="mt-4 flex justify-between items-center space-x-2">
-                <button onclick="downloadRealPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1">
+            <!-- BOTONES DE ACCIÓN (Descargar PDF Oficial + Enviar WhatsApp sin mostrar número) -->
+            <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+                <button onclick="downloadRealPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1 w-full sm:w-auto justify-center">
                     <span>📥 Descargar PDF Oficial</span>
                 </button>
-                <button onclick="sendReceiptWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1">
-                    <span>💬 Enviar por WhatsApp (3206272940)</span>
+                <button onclick="sendReceiptWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1 w-full sm:w-auto justify-center">
+                    <span>💬 Enviar por WhatsApp</span>
                 </button>
             </div>
         </div>
@@ -294,7 +328,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC5-Q3I0GhRIj1X_fyY6Lpb4jQ2BNA4MoI",
@@ -442,18 +476,69 @@
         let currentReceiptClient = null;
         let currentReceiptMes = "";
 
-        window.promptAndOpenReceiptEncoded = function(encodedStr) {
+        // Generar recibo con combo de meses, validación y consecutivo único en Firestore
+        window.promptAndOpenReceiptEncoded = async function(encodedStr) {
+            if (!confirm("¿Estás seguro de generar este recibo?")) return;
+
             const client = JSON.parse(decodeURIComponent(encodedStr));
             currentReceiptClient = client;
-            const mesActual = new Date().toLocaleString('es', { month: 'long' }).toUpperCase();
-            const mesIngresado = prompt("Ingrese el mes del periodo de cotización (Ej: MARZO, ABRIL):", mesActual);
-            if (!mesIngresado) return;
 
-            currentReceiptMes = mesIngresado.trim().toUpperCase();
+            const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+            const mesActualNombre = new Date().toLocaleString('es', { month: 'long' }).toUpperCase();
+            
+            let opcionesHTML = meses.map(m => `<option value="${m}" ${m === mesActualNombre ? 'selected' : ''}>${m}</option>`).join('');
+            
+            const promptHTML = `
+                <div id="mesModalPrompt" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-xl p-6 max-w-sm w-full space-y-4 shadow-2xl">
+                        <h3 class="font-bold text-slate-800 text-base">Seleccione el Periodo</h3>
+                        <p class="text-xs text-slate-600">Elija el mes correspondiente para la cotización de ${client.nombre}:</p>
+                        <select id="selectMesPrompt" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800 font-medium">${opcionesHTML}</select>
+                        <div class="flex justify-end space-x-2 pt-2">
+                            <button id="btnCancelMes" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-xs font-medium">Cancelar</button>
+                            <button id="btnOkMes" class="bg-sky-600 text-white px-4 py-2 rounded-lg text-xs font-medium">Continuar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', promptHTML);
+
+            const selectedMes = await new Promise((resolve) => {
+                document.getElementById('btnOkMes').onclick = () => {
+                    const val = document.getElementById('selectMesPrompt').value;
+                    document.getElementById('mesModalPrompt').remove();
+                    resolve(val);
+                };
+                document.getElementById('btnCancelMes').onclick = () => {
+                    document.getElementById('mesModalPrompt').remove();
+                    resolve(null);
+                };
+            });
+
+            if (!selectedMes) return;
+            currentReceiptMes = selectedMes;
+
+            // Obtener y actualizar consecutivo único en Firestore
+            let nuevoConsecutivo = "0001";
+            try {
+                const refConfig = doc(db, "config", "consecutivo");
+                const snapConfig = await getDoc(refConfig);
+                let ultimoNum = 0;
+                if (snapConfig.exists()) {
+                    ultimoNum = snapConfig.data().ultimo || 0;
+                }
+                ultimoNum++;
+                nuevoConsecutivo = String(ultimoNum).padStart(4, '0');
+                await setDoc(refConfig, { ultimo: ultimoNum });
+            } catch (err) {
+                console.error("Error gestionando consecutivo:", err);
+            }
+
             const fechaAhora = new Date();
             const fechaFormateada = fechaAhora.toLocaleDateString('es-CO');
             
-            document.getElementById('rc-consecutivo').innerText = "0001";
+            document.getElementById('rc-consecutivo').innerText = nuevoConsecutivo;
             document.getElementById('rc-fecha').innerText = fechaFormateada;
             document.getElementById('rc-nombre').innerText = client.nombre;
             document.getElementById('rc-cedula').innerText = client.cedula;
@@ -478,7 +563,7 @@
             document.getElementById('receiptModal').classList.add('hidden');
         };
 
-        // Función para descargar un PDF real con el tamaño y diseño exacto de PC
+        // Descargar PDF Real con diseño exacto
         window.downloadRealPDF = async function() {
             const { jsPDF } = window.jspdf;
             const element = document.getElementById('receiptPrintArea');
@@ -498,7 +583,7 @@
             }
         };
 
-        // Función para enviar el recibo por WhatsApp al número 3206272940
+        // Enviar por WhatsApp con número fijo predeterminado oculto
         window.sendReceiptWhatsApp = function() {
             if (!currentReceiptClient) return;
             const c = currentReceiptClient;
@@ -508,7 +593,7 @@
             let msg = `*A&S GESTION COMERCIAL PLUS SAS*\n`;
             msg += `NIT. 902.028.894-1 | Cel. 3235536049\n`;
             msg += `────────────────────────\n`;
-            msg += `📋 *COMPROBANTE DE PAGO N° 0001*\n`;
+            msg += `📋 *COMPROBANTE DE PAGO*\n`;
             msg += `📅 Fecha: ${fechaHoy}\n\n`;
             msg += `👤 *Asociado:* ${c.nombre}\n`;
             msg += `🆔 *Identidad:* ${c.cedula}\n`;
@@ -535,31 +620,36 @@
             clearTimeout(inactivityTimer);
             inactivityTimer = setTimeout(() => {
                 signOut(auth);
-                document.getElementById('adminDashboard').classList.add('hidden');
-                document.getElementById('adminLogin').classList.remove('hidden');
+                document.getElementById('headerLoggedArea').classList.add('hidden');
+                document.getElementById('headerLoginArea').classList.remove('hidden');
+                window.switchView('view-inicio');
             }, 15 * 60 * 1000);
         }
 
-        window.adminLogin = async function() {
-            const email = document.getElementById('adminEmail').value;
-            const pass = document.getElementById('adminPassword').value;
+        window.adminLoginQuick = async function() {
+            const email = document.getElementById('quickAdminEmail').value;
+            const pass = document.getElementById('quickAdminPass').value;
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
-                document.getElementById('adminLogin').classList.add('hidden');
-                document.getElementById('adminDashboard').classList.remove('hidden');
+                document.getElementById('headerLoginArea').classList.add('hidden');
+                document.getElementById('headerLoggedArea').classList.remove('hidden');
                 ['mousemove', 'keypress', 'click', 'touchstart'].forEach(evt => window.addEventListener(evt, resetAdminTimer));
                 resetAdminTimer();
-            } catch (e) { alert("Error: " + e.message); }
+                window.switchView('view-clientes');
+            } catch (e) { alert("Credenciales incorrectas: " + e.message); }
         };
 
         window.adminLogout = async function() {
             await signOut(auth);
-            document.getElementById('adminDashboard').classList.add('hidden');
-            document.getElementById('adminLogin').classList.remove('hidden');
+            document.getElementById('headerLoggedArea').classList.add('hidden');
+            document.getElementById('headerLoginArea').classList.remove('hidden');
+            document.getElementById('quickAdminEmail').value = '';
+            document.getElementById('quickAdminPass').value = '';
             clearTimeout(inactivityTimer);
+            window.switchView('view-inicio');
         };
 
-        window.onload = () => { window.switchView('view-clientes'); };
+        window.onload = () => { window.switchView('view-inicio'); };
     </script>
 </body>
 </html>
