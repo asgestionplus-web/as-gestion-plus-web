@@ -51,9 +51,8 @@
 
         <!-- 1. VISTA LISTADO Y EDICIÓN -->
         <section id="view-clientes" class="view-section view-active space-y-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div class="flex justify-between items-center">
                 <h2 class="text-xl font-bold">Listado de Afiliados</h2>
-                <button onclick="seedDatabase()" class="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded text-xs font-semibold transition">🚀 Precargar los 15 Clientes del Sistema</button>
             </div>
             <div class="relative">
                 <input type="text" id="searchClient" placeholder="Buscar por cédula o nombre..." class="w-full bg-slate-800 border border-slate-700 rounded px-4 py-2 text-sm focus:outline-none focus:border-blue-500" onkeyup="filterClients()">
@@ -144,7 +143,6 @@
         <div class="bg-slate-900 text-slate-900 w-full max-w-2xl rounded p-4 relative shadow-2xl my-8">
             <button onclick="closeReceiptModal()" class="absolute top-2 right-3 text-white hover:text-red-400 font-bold text-lg">✕</button>
             
-            <!-- Contenedor con fondo blanco puro y tipografía oscura para evitar PDFs en blanco -->
             <div id="receiptContent" style="background-color: #ffffff !important; color: #000000 !important;" class="border-2 border-black p-4 text-xs space-y-3">
                 <div class="flex justify-between items-start border-b border-black pb-3">
                     <div>
@@ -159,7 +157,6 @@
                     </div>
                 </div>
 
-                <!-- Datos Cliente -->
                 <div class="border border-black p-2 space-y-1 text-black">
                     <p class="font-bold text-[11px]">Datos del Cliente</p>
                     <div class="grid grid-cols-2 gap-2">
@@ -172,7 +169,6 @@
                     </div>
                 </div>
 
-                <!-- Datos Cotización -->
                 <div class="border border-black p-2 space-y-1 text-black">
                     <p class="font-bold text-[11px]">Datos Cotización</p>
                     <table class="w-full border-collapse border border-black text-center text-[10px]">
@@ -197,7 +193,6 @@
                     </table>
                 </div>
 
-                <!-- Detalle Recibo -->
                 <div class="border border-black p-2 space-y-1 text-black">
                     <p class="font-bold text-[11px]">Detalle Recibo</p>
                     <table class="w-full border-collapse border border-black text-[10px]">
@@ -235,7 +230,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC5-Q3I0GhRIj1X_fyY6Lpb4jQ2BNA4MoI",
@@ -279,52 +274,6 @@
 
         flatpickr("#reg-fnac", { dateFormat: "Y-m-d", theme: "dark" });
 
-        window.seedDatabase = async function() {
-            const initialClients = [
-                { cedula: "42102471", nombre: "YINET GRAJALES PODADA" },
-                { cedula: "1098310554", nombre: "JUAN DAVID URREA ACEVEDO" },
-                { cedula: "18399239", nombre: "YOUBER ALVEIRO SUAREZ VELASCO" },
-                { cedula: "4377217", nombre: "JOHN JAIBER MONTAÑA HURTADO" },
-                { cedula: "6192965", nombre: "ARMANDO OCAMPO OSPINA" },
-                { cedula: "41893692", nombre: "MARIA DOLLY GUTIERREZ GONZALEZ" },
-                { cedula: "14984639", nombre: "MARCO ANTONIO RAMIREZ" },
-                { cedula: "31345015", nombre: "FLOR MARINA RAMIREZ OSPINA" },
-                { cedula: "25201908", nombre: "ROSALBA CARDONA RAMIREZ" },
-                { cedula: "51815433", nombre: "MARIA EUGENIA MARTINEZ" },
-                { cedula: "1094893230", nombre: "PAOLA RIOS" },
-                { cedula: "1096032854", nombre: "MARIANA JURADO" },
-                { cedula: "7547237", nombre: "JORGE ELIECER BUITRAGO FLOREZ" },
-                { cedula: "31131140", nombre: "MAGNOLIA REBOLLEDO" },
-                { cedula: "41930687", nombre: "ALBA LIGIA DE LA CRUZ" }
-            ];
-
-            try {
-                const batch = writeBatch(db);
-                initialClients.forEach(c => {
-                    const docRef = doc(db, "clientes", c.cedula);
-                    batch.set(docRef, {
-                        cedula: c.cedula,
-                        nombre: c.nombre,
-                        f_nac: "1990-01-01",
-                        celular: "3000000000",
-                        correo: "afiliado@example.com",
-                        direccion: "ARMENIA",
-                        eps: "SURA",
-                        pension: "N/A",
-                        arl: "POSITIVA",
-                        tipo: "Solo Salud",
-                        valor: 122222,
-                        updatedAt: new Date().toISOString()
-                    }, { merge: true });
-                });
-                await batch.commit();
-                alert("¡Se han precargado los 15 clientes correctamente!");
-                loadClients();
-            } catch (e) {
-                alert("Error al precargar: " + e.message);
-            }
-        };
-
         window.saveClient = async function(e) {
             e.preventDefault();
             const cedula = document.getElementById('reg-cedula').value.trim();
@@ -357,7 +306,7 @@
         let allClientsCache = [];
         async function loadClients() {
             const container = document.getElementById('clientsContainer');
-            container.innerHTML = '<p class="text-sm text-slate-400">Cargando clientes...</p>';
+            container.innerHTML = '<p class="text-sm text-slate-400">Cargando clientes de Firestore...</p>';
             try {
                 const querySnapshot = await getDocs(collection(db, "clientes"));
                 allClientsCache = [];
@@ -371,26 +320,29 @@
         function renderClients(clients) {
             const container = document.getElementById('clientsContainer');
             if (clients.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-400">No hay clientes registrados.</p>';
+                container.innerHTML = '<p class="text-sm text-slate-400">No hay clientes registrados en la base de datos.</p>';
                 return;
             }
-            container.innerHTML = clients.map(c => `
-                <div class="bg-slate-800 border border-slate-700 rounded p-4 flex flex-col justify-between space-y-2">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <h3 class="font-bold text-white text-base">${c.nombre}</h3>
-                            <span class="text-xs bg-blue-900 text-blue-200 px-2 py-0.5 rounded">${c.tipo}</span>
+            container.innerHTML = clients.map(c => {
+                const clientStr = encodeURIComponent(JSON.stringify(c));
+                return `
+                    <div class="bg-slate-800 border border-slate-700 rounded p-4 flex flex-col justify-between space-y-2">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-bold text-white text-base">${c.nombre}</h3>
+                                <span class="text-xs bg-blue-900 text-blue-200 px-2 py-0.5 rounded">${c.tipo || 'Solo Salud'}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">Cédula: ${c.cedula} | Cel: ${c.celular || 'N/A'}</p>
+                            <p class="text-xs text-slate-400">EPS: ${c.eps || 'N/A'} | Dirección: ${c.direccion || 'ARMENIA'}</p>
+                            <p class="text-sm font-semibold text-emerald-400 mt-2">Valor: $${(c.valor || 0).toLocaleString()}</p>
                         </div>
-                        <p class="text-xs text-slate-400 mt-1">Cédula: ${c.cedula} | Cel: ${c.celular}</p>
-                        <p class="text-xs text-slate-400">EPS: ${c.eps || 'N/A'} | Dirección: ${c.direccion || 'ARMENIA'}</p>
-                        <p class="text-sm font-semibold text-emerald-400 mt-2">Valor: $${c.valor.toLocaleString()}</p>
+                        <div class="flex justify-end space-x-2 pt-2 border-t border-slate-700">
+                            <button onclick='window.editClientEncoded("${clientStr}")' class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1 rounded text-xs font-medium">Editar</button>
+                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-xs font-medium">Recibo PDF</button>
+                        </div>
                     </div>
-                    <div class="flex justify-end space-x-2 pt-2 border-t border-slate-700">
-                        <button onclick='window.editClient(${JSON.stringify(c)})' class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1 rounded text-xs font-medium">Editar</button>
-                        <button onclick='window.promptAndOpenReceipt(${JSON.stringify(c)})' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-xs font-medium">Recibo PDF</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         window.filterClients = function() {
@@ -399,7 +351,8 @@
             renderClients(filtered);
         };
 
-        window.editClient = function(c) {
+        window.editClientEncoded = function(encodedStr) {
+            const c = JSON.parse(decodeURIComponent(encodedStr));
             document.getElementById('reg-cedula').value = c.cedula;
             document.getElementById('reg-cedula').readOnly = true;
             document.getElementById('reg-nombre').value = c.nombre || '';
@@ -422,11 +375,11 @@
             document.getElementById('formTitle').innerText = "Registrar Nuevo Cliente";
         };
 
-        // Solicita el mes antes de abrir el modal del recibo PDF
-        window.promptAndOpenReceipt = function(client) {
-            const mesActual = new Date().toLocaleString('es', { month: 'uppercase' });
-            const mesIngresado = prompt("Ingrese el mes del periodo de cotización (Ej: MARZO, ABRIL, MAYO):", mesActual);
-            if (!mesIngresado) return; // Si cancela, no hace nada
+        window.promptAndOpenReceiptEncoded = function(encodedStr) {
+            const client = JSON.parse(decodeURIComponent(encodedStr));
+            const mesActual = new Date().toLocaleString('es', { month: 'long' }).toUpperCase();
+            const mesIngresado = prompt("Ingrese el mes del periodo de cotización (Ej: MARZO, ABRIL):", mesActual);
+            if (!mesIngresado) return;
 
             const mesUpper = mesIngresado.trim().toUpperCase();
             
@@ -441,11 +394,10 @@
             document.getElementById('rc-arl').innerText = client.arl || "POSITIVA";
             document.getElementById('rc-tipo-serv').innerText = client.cedula.slice(-6);
             
-            // Asignación del mes ingresado en Periodo y Concepto
             document.getElementById('rc-mes').innerText = mesUpper;
             document.getElementById('rc-concepto').innerText = `APORTES SEGURIDAD SOCIAL ${mesUpper}`;
             
-            const valorFmt = `$ ${client.valor.toLocaleString()}`;
+            const valorFmt = `$ ${(client.valor || 0).toLocaleString()}`;
             document.getElementById('rc-valor1').innerText = valorFmt;
             document.getElementById('rc-total').innerText = valorFmt;
             
