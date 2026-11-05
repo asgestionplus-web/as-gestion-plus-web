@@ -1,33 +1,37 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A&S Gestión Clientes - Salud</title>
+    <title>A&S Gestión Comercial Plus SAS - Gestión de Clientes</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
-                extend: { colors: { primary: '#1e3a8a', accent: '#3b82f6' } }
+                extend: { 
+                    colors: { 
+                        primary: '#0ea5e9', 
+                        darkblue: '#0369a1',
+                        slatebg: '#f8fafc' 
+                    } 
+                }
             }
         }
     </script>
 
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
 
     <!-- Failsafe CSS Nativo Embebido -->
     <style>
         .view-section { display: none !important; }
         .view-active { display: block !important; }
-        body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
-        .fail-safe-box { border: 1px solid #334155; background: #1e293b; border-radius: 0.5rem; padding: 1.5rem; }
+        body { background-color: #f1f5f9; color: #1e293b; font-family: system-ui, -apple-system, sans-serif; }
+        .fail-safe-box { border: 1px solid #cbd5e1; background: #ffffff; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        /* Estilos de Impresión Vectorial Exacta */
+        /* Estilos de Impresión Vectorial Exacta del Recibo */
         @media print {
             body * { visibility: hidden !important; }
             #receiptPrintArea, #receiptPrintArea * { visibility: visible !important; }
@@ -38,6 +42,7 @@
                 width: 100% !important;
                 background-color: #ffffff !important;
                 color: #000000 !important;
+                border: 2px solid #000 !important;
                 padding: 10px !important;
             }
         }
@@ -45,130 +50,135 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- HEADER -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-4 py-3 flex justify-between items-center">
+    <!-- HEADER / NAVEGACIÓN (Estilo Salud / Fondo Blanco & Azul Corporativo) -->
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 px-6 py-3 flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <svg width="28" height="28" style="min-width:28px; min-height:28px;" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-            <span class="font-bold text-lg text-white">A&S Gestión Salud</span>
+            <!-- Logotipo Oficial Incorporado en el Header -->
+            <img src="710123.jpg" alt="A&S Logo" class="h-10 w-auto object-contain">
+            <div>
+                <span class="font-bold text-base text-slate-800 block">A&S GESTIÓN PLUS</span>
+                <span class="text-[10px] text-slate-500 tracking-wider">GESTIONA TU BIENESTAR</span>
+            </div>
         </div>
         <nav id="mainNav" class="flex space-x-2">
-            <button onclick="switchView('view-clientes')" class="px-3 py-1.5 rounded bg-slate-800 text-sm hover:bg-slate-700 transition">Clientes</button>
-            <button onclick="switchView('view-registro')" class="px-3 py-1.5 rounded bg-slate-800 text-sm hover:bg-slate-700 transition">Nuevo</button>
-            <button onclick="switchView('view-admin')" class="px-3 py-1.5 rounded bg-blue-600 text-sm hover:bg-blue-500 transition">Admin</button>
+            <button onclick="switchView('view-clientes')" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-medium text-sm hover:bg-sky-50 hover:text-sky-600 transition">Clientes</button>
+            <button onclick="switchView('view-registro')" class="px-4 py-2 rounded-lg bg-sky-600 text-white font-medium text-sm hover:bg-sky-500 transition shadow-sm">+ Nuevo</button>
+            <button onclick="switchView('view-admin')" class="px-4 py-2 rounded-lg bg-slate-800 text-white font-medium text-sm hover:bg-slate-700 transition">Admin</button>
         </nav>
     </header>
 
-    <!-- CONTENIDO -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-grow p-4 max-w-5xl mx-auto w-full">
 
         <!-- 1. VISTA LISTADO Y EDICIÓN -->
         <section id="view-clientes" class="view-section view-active space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">Listado de Afiliados</h2>
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Directorio de Afiliados</h2>
+                    <p class="text-xs text-slate-500">Gestión y control de aportes a seguridad social</p>
+                </div>
             </div>
             <div class="relative">
-                <input type="text" id="searchClient" placeholder="Buscar por cédula o nombre..." class="w-full bg-slate-800 border border-slate-700 rounded px-4 py-2 text-sm focus:outline-none focus:border-blue-500" onkeyup="filterClients()">
+                <input type="text" id="searchClient" placeholder="Buscar por cédula o nombre..." class="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 shadow-sm focus:outline-none focus:border-sky-500" onkeyup="filterClients()">
             </div>
             <div id="clientsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </section>
 
         <!-- 2. VISTA REGISTRO / EDICIÓN -->
         <section id="view-registro" class="view-section fail-safe-box space-y-4">
-            <h2 id="formTitle" class="text-xl font-bold border-b border-slate-700 pb-2">Registrar Nuevo Cliente</h2>
+            <h2 id="formTitle" class="text-lg font-bold text-slate-800 border-b border-slate-200 pb-2">Registrar Nuevo Cliente</h2>
             <form id="clientForm" onsubmit="saveClient(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                 <div>
-                    <label class="block text-slate-400 mb-1">Cédula</label>
-                    <input type="text" id="reg-cedula" required class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                    <label class="block text-slate-600 font-medium mb-1">Cédula</label>
+                    <input type="text" id="reg-cedula" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Nombre Completo</label>
-                    <input type="text" id="reg-nombre" required class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                    <label class="block text-slate-600 font-medium mb-1">Nombre Completo</label>
+                    <input type="text" id="reg-nombre" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Fecha de Nacimiento</label>
-                    <input type="text" id="reg-fnac" placeholder="YYYY-MM-DD" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                    <label class="block text-slate-600 font-medium mb-1">Fecha de Nacimiento</label>
+                    <input type="text" id="reg-fnac" placeholder="YYYY-MM-DD" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Celular</label>
-                    <input type="text" id="reg-celular" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                    <label class="block text-slate-600 font-medium mb-1">Celular</label>
+                    <input type="text" id="reg-celular" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Correo Electrónico</label>
-                    <input type="email" id="reg-correo" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                    <label class="block text-slate-600 font-medium mb-1">Correo Electrónico</label>
+                    <input type="email" id="reg-correo" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Dirección</label>
-                    <input type="text" id="reg-direccion" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="ARMENIA">
+                    <label class="block text-slate-600 font-medium mb-1">Dirección</label>
+                    <input type="text" id="reg-direccion" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white" value="ARMENIA">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">E.P.S.</label>
-                    <input type="text" id="reg-eps" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="SURA">
+                    <label class="block text-slate-600 font-medium mb-1">E.P.S.</label>
+                    <input type="text" id="reg-eps" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white" value="SURA">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Fondo de Pensiones (AFP)</label>
-                    <input type="text" id="reg-pension" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="N/A">
+                    <label class="block text-slate-600 font-medium mb-1">Fondo de Pensiones (AFP)</label>
+                    <input type="text" id="reg-pension" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white" value="N/A">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">A.R.L.</label>
-                    <input type="text" id="reg-arl" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="POSITIVA">
+                    <label class="block text-slate-600 font-medium mb-1">A.R.L.</label>
+                    <input type="text" id="reg-arl" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white" value="POSITIVA">
                 </div>
                 <div>
-                    <label class="block text-slate-400 mb-1">Tipo de Servicio</label>
-                    <select id="reg-tipo" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white">
+                    <label class="block text-slate-600 font-medium mb-1">Tipo de Servicio</label>
+                    <select id="reg-tipo" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white">
                         <option value="Solo Salud">Solo Salud</option>
                         <option value="Todo">Todo</option>
                     </select>
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-slate-400 mb-1">Valor a Pagar ($)</label>
-                    <input type="number" id="reg-valor" required class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white" value="122222">
+                    <label class="block text-slate-600 font-medium mb-1">Valor a Pagar ($)</label>
+                    <input type="number" id="reg-valor" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white" value="122222">
                 </div>
                 <div class="sm:col-span-2 flex justify-between space-x-3 pt-2">
-                    <button type="button" onclick="resetForm()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded font-semibold text-white transition">Cancelar / Nuevo</button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-semibold text-white transition">Guardar Cliente</button>
+                    <button type="button" onclick="resetForm()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-lg font-medium transition">Cancelar</button>
+                    <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2.5 rounded-lg font-medium transition shadow-sm">Guardar Cliente</button>
                 </div>
             </form>
         </section>
 
         <!-- 3. VISTA PANEL ADMIN -->
         <section id="view-admin" class="view-section fail-safe-box space-y-4">
-            <h2 class="text-xl font-bold border-b border-slate-700 pb-2">Panel Administrativo</h2>
+            <h2 class="text-lg font-bold text-slate-800 border-b border-slate-200 pb-2">Panel Administrativo</h2>
             <div id="adminLogin" class="space-y-3">
-                <p class="text-sm text-slate-400">Inicie sesión para acceder a funciones administrativas (bloqueo por inactividad 15 min).</p>
-                <input type="email" id="adminEmail" placeholder="Correo admin" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm">
-                <input type="password" id="adminPassword" placeholder="Contraseña" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm">
-                <button onclick="adminLogin()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm w-full font-semibold">Iniciar Sesión</button>
+                <p class="text-sm text-slate-600">Inicie sesión para acceder a funciones administrativas (bloqueo por inactividad de 15 min).</p>
+                <input type="email" id="adminEmail" placeholder="Correo admin" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800">
+                <input type="password" id="adminPassword" placeholder="Contraseña" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm text-slate-800">
+                <button onclick="adminLogin()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-lg text-sm w-full font-medium shadow-sm">Iniciar Sesión</button>
             </div>
             <div id="adminDashboard" class="hidden space-y-4">
-                <div class="flex justify-between items-center bg-slate-900 p-3 rounded">
-                    <span class="text-sm text-emerald-400 font-medium">● Sesión Activa (Inactividad 15m)</span>
-                    <button onclick="adminLogout()" class="bg-rose-600 hover:bg-rose-500 px-3 py-1 rounded text-xs">Cerrar Sesión</button>
+                <div class="flex justify-between items-center bg-sky-50 border border-sky-200 p-3 rounded-lg">
+                    <span class="text-sm text-sky-800 font-medium">● Sesión Activa (Inactividad 15m)</span>
+                    <button onclick="adminLogout()" class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1 rounded text-xs font-medium">Cerrar Sesión</button>
                 </div>
-                <p class="text-sm text-slate-300">Panel seguro operativo conectado con Firestore.</p>
+                <p class="text-sm text-slate-600">Panel seguro operativo conectado con Firestore.</p>
             </div>
         </section>
 
     </main>
 
-    <!-- MODAL DE RECIBO PDF (PLANTILLA FIDEDIGNA DE EXCEL) -->
-    <div id="receiptModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-2 overflow-y-auto">
-        <div class="bg-slate-900 w-full max-w-3xl rounded p-4 relative shadow-2xl my-8">
-            <button onclick="closeReceiptModal()" class="absolute top-2 right-3 text-white hover:text-red-400 font-bold text-lg">✕</button>
+    <!-- MODAL DE RECIBO PDF (PLANTILLA IDÉNTICA A LA IMAGEN Proporcionada) -->
+    <div id="receiptModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 overflow-y-auto">
+        <div class="bg-white w-full max-w-3xl rounded-xl p-4 relative shadow-2xl my-8">
+            <button onclick="closeReceiptModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 font-bold text-lg">✕</button>
             
-            <!-- ÁREA DE IMPRESIÓN Y VISTA PREVIA (Estilo Excel Exacto) -->
-            <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-4 border-black p-4 text-xs space-y-2">
+            <!-- ÁREA DE IMPRESIÓN (Estructura idéntica a tu plantilla de Excel / Screenshot) -->
+            <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-2 border-black p-4 text-xs space-y-2">
                 
-                <!-- Encabezado con Logo y Consecutivo -->
-                <div class="flex justify-between items-start">
+                <!-- Encabezado -->
+                <div class="flex justify-between items-start border-b-2 border-black pb-3">
                     <div class="flex items-center space-x-3">
-                        <div class="w-16 h-16 border border-slate-300 flex items-center justify-center font-bold text-blue-900 text-[10px] text-center p-1">
-                            A&S GESTION PLUS
-                        </div>
+                        <img src="710123.jpg" alt="Logo" class="h-14 w-auto object-contain">
                         <div>
                             <h1 class="font-bold text-sm text-black uppercase">A&S GESTION COMERCIAL PLUS SAS</h1>
                             <p class="text-[11px] font-semibold text-black">NIT.902.028.894-1</p>
                             <p class="text-[11px] text-black">Cel. 3235536049</p>
-                            <p class="text-[11px] text-blue-800">E- Mail: asgestionplus@gmail.com</p>
+                            <p class="text-[11px] text-blue-800 font-medium">E- Mail: asgestionplus@gmail.com</p>
                         </div>
                     </div>
                     <div class="border border-black w-56 text-[11px] text-black">
@@ -262,13 +272,13 @@
             </div>
 
             <div class="mt-4 flex justify-end space-x-2">
-                <button onclick="downloadPDF()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded text-xs font-semibold">🖨️ Generar / Descargar PDF Perfecto</button>
+                <button onclick="downloadPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition">🖨️ Generar / Descargar PDF Oficial</button>
             </div>
         </div>
     </div>
 
     <!-- FOOTER -->
-    <footer class="bg-slate-900 border-t border-slate-800 text-center py-3 text-xs text-slate-500">
+    <footer class="bg-white border-t border-slate-200 text-center py-3 text-xs text-slate-500">
         A&S Gestión Comercial Plus SAS © 2026 - PWA Resiliente
     </footer>
 
@@ -319,7 +329,7 @@
             if(viewId === 'view-clientes') loadClients();
         };
 
-        flatpickr("#reg-fnac", { dateFormat: "Y-m-d", theme: "dark" });
+        flatpickr("#reg-fnac", { dateFormat: "Y-m-d" });
 
         window.saveClient = async function(e) {
             e.preventDefault();
@@ -353,39 +363,39 @@
         let allClientsCache = [];
         async function loadClients() {
             const container = document.getElementById('clientsContainer');
-            container.innerHTML = '<p class="text-sm text-slate-400">Cargando clientes de Firestore...</p>';
+            container.innerHTML = '<p class="text-sm text-slate-500 py-4 text-center">Cargando clientes de Firestore...</p>';
             try {
                 const querySnapshot = await getDocs(collection(db, "clientes"));
                 allClientsCache = [];
                 querySnapshot.forEach(docSnap => allClientsCache.push(docSnap.data()));
                 renderClients(allClientsCache);
             } catch (e) {
-                container.innerHTML = `<p class="text-sm text-rose-400">Error al cargar: ${e.message}</p>`;
+                container.innerHTML = `<p class="text-sm text-rose-500 py-4 text-center">Error al cargar: ${e.message}</p>`;
             }
         }
 
         function renderClients(clients) {
             const container = document.getElementById('clientsContainer');
             if (clients.length === 0) {
-                container.innerHTML = '<p class="text-sm text-slate-400">No hay clientes registrados en la base de datos.</p>';
+                container.innerHTML = '<p class="text-sm text-slate-500 py-4 text-center">No hay clientes registrados en la base de datos.</p>';
                 return;
             }
             container.innerHTML = clients.map(c => {
                 const clientStr = encodeURIComponent(JSON.stringify(c));
                 return `
-                    <div class="bg-slate-800 border border-slate-700 rounded p-4 flex flex-col justify-between space-y-2">
+                    <div class="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between space-y-3 shadow-sm hover:shadow-md transition">
                         <div>
                             <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-white text-base">${c.nombre}</h3>
-                                <span class="text-xs bg-blue-900 text-blue-200 px-2 py-0.5 rounded">${c.tipo || 'Solo Salud'}</span>
+                                <h3 class="font-bold text-slate-800 text-base">${c.nombre}</h3>
+                                <span class="text-xs bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full font-medium">${c.tipo || 'Solo Salud'}</span>
                             </div>
-                            <p class="text-xs text-slate-400 mt-1">Cédula: ${c.cedula} | Cel: ${c.celular || 'N/A'}</p>
-                            <p class="text-xs text-slate-400">EPS: ${c.eps || 'N/A'} | Dirección: ${c.direccion || 'ARMENIA'}</p>
-                            <p class="text-sm font-semibold text-emerald-400 mt-2">Valor: $${(c.valor || 0).toLocaleString()}</p>
+                            <p class="text-xs text-slate-500 mt-1">Cédula: <strong class="text-slate-700">${c.cedula}</strong> | Cel: ${c.celular || 'N/A'}</p>
+                            <p class="text-xs text-slate-500">EPS: <strong class="text-slate-700">${c.eps || 'N/A'}</strong> | Dirección: ${c.direccion || 'ARMENIA'}</p>
+                            <p class="text-sm font-bold text-emerald-600 mt-2">Valor: $${(c.valor || 0).toLocaleString('es-CO')}</p>
                         </div>
-                        <div class="flex justify-end space-x-2 pt-2 border-t border-slate-700">
-                            <button onclick='window.editClientEncoded("${clientStr}")' class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1 rounded text-xs font-medium">Editar</button>
-                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-xs font-medium">Recibo PDF</button>
+                        <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
+                            <button onclick='window.editClientEncoded("${clientStr}")' class="bg-amber-500 hover:bg-amber-400 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Editar</button>
+                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Recibo PDF</button>
                         </div>
                     </div>
                 `;
