@@ -51,14 +51,25 @@
 <body class="min-h-screen flex flex-col justify-between">
 
     <!-- HEADER / NAVEGACIÓN -->
-    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 px-6 py-3 flex justify-between items-center">
+    <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 px-6 py-2 flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <!-- Logotipo Vectorial Embebido (Sin saltos de línea ni errores de URL) -->
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTcgMTg3IiB3aWR0aD0iMTU3IiBoZWlnaHQ9IjE4NyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2ZmZmZmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNDUlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQW1yaWNhLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZvbnQtc2l6ZT0iMzIiIGZpbGw9Ii3DIzY5YTEiPkEmUzwvdGV4dD48dGV4dCB4PSI1MCUiIHk9IjY1JSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBmaWxsPSIjNjQ3NThiIj5FT1JJR0lOPC90ZXh0Pjwvc3ZnPg==" alt="A&S Logo" class="h-10 w-auto object-contain bg-white">
-            <div>
-                <span class="font-bold text-base text-slate-800 block">A&S GESTIÓN PLUS</span>
-                <span class="text-[10px] text-slate-500 tracking-wider">GESTIONA TU BIENESTAR</span>
-            </div>
+            <!-- Logotipo SVG Vectorial Nativo Embebido Directo -->
+            <svg viewBox="0 0 220 70" class="h-12 w-auto">
+                <defs>
+                    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#0284c7;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#10b981;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#eab308;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <!-- Espiral de Ondas -->
+                <path d="M 10 50 A 25 25 0 0 1 55 15 A 20 20 0 0 0 15 45" fill="#0369a1"/>
+                <path d="M 15 55 A 28 28 0 0 1 58 10 A 22 22 0 0 0 18 48" fill="#10b981" opacity="0.85"/>
+                <path d="M 8 45 A 22 22 0 0 1 50 20 A 18 18 0 0 0 12 40" fill="#eab308"/>
+                <!-- Texto Corporativo Integrado -->
+                <text x="65" y="32" font-family="Arial, sans-serif" font-weight="bold" font-size="15" fill="#0f172a">A&amp;S GESTIÓN PLUS</text>
+                <text x="65" y="48" font-family="Arial, sans-serif" font-weight="normal" font-size="9" letter-spacing="1.5" fill="#64748b">GESTIONA TU BIENESTAR</text>
+            </svg>
         </div>
         <nav id="mainNav" class="flex space-x-2">
             <button onclick="switchView('view-clientes')" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 font-medium text-sm hover:bg-sky-50 hover:text-sky-600 transition">Clientes</button>
@@ -170,10 +181,16 @@
             <!-- ÁREA DE IMPRESIÓN -->
             <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-2 border-black p-4 text-xs space-y-2">
                 
-                <!-- Encabezado con Logo Embebido Limpio -->
+                <!-- Encabezado con Logo SVG Directo -->
                 <div class="flex justify-between items-start border-b-2 border-black pb-3">
                     <div class="flex items-center space-x-3">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTcgMTg3IiB3aWR0aD0iMTU3IiBoZWlnaHQ9IjE4NyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2ZmZmZmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNDUlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmb250LXNpemU9IjMyIiBmaWxsPSIjMDM2OWExIj5BJlM8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzY0NzU4YiI+R0VOSVM8L3RleHQ+PC9zdmc+" alt="Logo" class="h-14 w-auto object-contain bg-white">
+                        <svg viewBox="0 0 220 70" class="h-14 w-auto">
+                            <path d="M 10 50 A 25 25 0 0 1 55 15 A 20 20 0 0 0 15 45" fill="#0369a1"/>
+                            <path d="M 15 55 A 28 28 0 0 1 58 10 A 22 22 0 0 0 18 48" fill="#10b981" opacity="0.85"/>
+                            <path d="M 8 45 A 22 22 0 0 1 50 20 A 18 18 0 0 0 12 40" fill="#eab308"/>
+                            <text x="65" y="32" font-family="Arial, sans-serif" font-weight="bold" font-size="14" fill="#000000">A&amp;S GESTION PLUS</text>
+                            <text x="65" y="48" font-family="Arial, sans-serif" font-weight="normal" font-size="9" letter-spacing="1.5" fill="#333333">GESTIONA TU BIENESTAR</text>
+                        </svg>
                         <div>
                             <h1 class="font-bold text-sm text-black uppercase">A&S GESTION COMERCIAL PLUS SAS</h1>
                             <p class="text-[11px] font-semibold text-black">NIT.902.028.894-1</p>
