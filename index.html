@@ -24,18 +24,22 @@
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- Failsafe CSS Nativo y Ajuste Responsivo Absoluto para Impresión Móvil y PC -->
+    <!-- Failsafe CSS Nativo y Corrección Absoluta de Impresión Móvil (1 Sola Página Real) -->
     <style>
         .view-section { display: none !important; }
         .view-active { display: block !important; }
         body { background-color: #f1f5f9; color: #1e293b; font-family: system-ui, -apple-system, sans-serif; }
         .fail-safe-box { border: 1px solid #cbd5e1; background: #ffffff; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        /* Estilos de Impresión Optimizados y Anti-Corte para Celulares y PC */
+        /* Estilos de Impresión Optimizados para Celular y PC (Ajuste Automático sin desbordes) */
         @media print {
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
+            }
+            @page {
+                size: portrait;
+                margin: 5mm;
             }
             body, html {
                 width: 100% !important;
@@ -53,14 +57,16 @@
                 top: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
+                min-width: 0 !important;
                 background-color: #ffffff !important;
                 color: #000000 !important;
                 border: 2px solid #000 !important;
-                padding: 10px !important;
+                padding: 8px !important;
                 margin: 0 !important;
                 box-shadow: none !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
+                transform: scale(1);
             }
         }
     </style>
@@ -188,13 +194,13 @@
 
     </main>
 
-    <!-- MODAL DE RECIBO PDF (Con contenedor responsivo anti-corte en móviles) -->
+    <!-- MODAL DE RECIBO PDF -->
     <div id="receiptModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 overflow-y-auto">
         <div class="bg-white w-full max-w-2xl rounded-xl p-3 relative shadow-2xl my-8 overflow-x-auto">
             <button onclick="closeReceiptModal()" class="absolute top-2 right-2 text-slate-400 hover:text-slate-700 font-bold text-lg z-10">✕</button>
             
             <!-- ÁREA DE IMPRESIÓN -->
-            <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important; min-width: 650px;" class="border-2 border-black p-4 text-xs space-y-2">
+            <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-2 border-black p-4 text-xs space-y-2 w-full">
                 
                 <!-- Encabezado con Logo SVG Directo -->
                 <div class="flex justify-between items-start border-b-2 border-black pb-3">
