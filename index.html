@@ -24,7 +24,7 @@
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- Estilos CSS Definitivos para 1 Sola Página Exacta (Sin desbordes ni páginas vacías) -->
+    <!-- Estilos CSS Definitivos para Impresión Limpia y sin Cortes -->
     <style>
         .view-section { display: none !important; }
         .view-active { display: block !important; }
@@ -38,15 +38,15 @@
             }
             @page {
                 size: letter portrait;
-                margin: 0mm;
+                margin: 8mm;
             }
             html, body {
                 width: 100% !important;
-                height: 100% !important;
+                height: auto !important;
                 background-color: #ffffff !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                overflow: hidden !important;
+                overflow: visible !important;
             }
             body * { visibility: hidden !important; }
             #receiptPrintArea, #receiptPrintArea * { visibility: visible !important; }
@@ -59,11 +59,9 @@
                 background-color: #ffffff !important;
                 color: #000000 !important;
                 border: 2px solid #000 !important;
-                padding: 12px !important;
+                padding: 10px !important;
                 margin: 0 !important;
                 box-shadow: none !important;
-                page-break-before: avoid !important;
-                page-break-after: avoid !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
@@ -195,15 +193,15 @@
 
     <!-- MODAL DE RECIBO PDF -->
     <div id="receiptModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 overflow-y-auto">
-        <div class="bg-white w-full max-w-xl rounded-xl p-3 relative shadow-2xl my-4">
+        <div class="bg-white w-full max-w-2xl rounded-xl p-3 relative shadow-2xl my-4">
             <button onclick="closeReceiptModal()" class="absolute top-2 right-2 text-slate-400 hover:text-slate-700 font-bold text-lg z-10">✕</button>
             
             <!-- ÁREA DE IMPRESIÓN -->
-            <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-2 border-black p-3 text-xs space-y-2 w-full">
+            <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-2 border-black p-3 text-xs space-y-2.5 w-full">
                 
-                <!-- Encabezado con Logo SVG Directo y Cuadro Ajustado -->
-                <div class="flex justify-between items-start border-b-2 border-black pb-2">
-                    <div class="flex items-center space-x-2">
+                <!-- Encabezado con Logo SVG Directo y Cuadro Compacto Exacto -->
+                <div class="flex justify-between items-start border-b-2 border-black pb-2.5">
+                    <div class="flex items-center space-x-2.5">
                         <svg viewBox="0 0 220 70" class="h-12 w-auto">
                             <path d="M 10 50 A 25 25 0 0 1 55 15 A 20 20 0 0 0 15 45" fill="#0369a1"/>
                             <path d="M 15 55 A 28 28 0 0 1 58 10 A 22 22 0 0 0 18 48" fill="#10b981" opacity="0.85"/>
@@ -218,10 +216,10 @@
                             <p class="text-[10px] text-blue-800 font-medium">E- Mail: asgestionplus@gmail.com</p>
                         </div>
                     </div>
-                    <!-- Cuadro de Recibo ajustado sin desbordarse -->
-                    <div class="border border-black w-40 text-[10px] text-black shrink-0">
+                    <!-- Cuadro de Recibo Compacto y Fijo sin desbordarse -->
+                    <div class="border border-black w-36 text-[10px] text-black shrink-0">
                         <div class="flex justify-between border-b border-black p-0.5 px-1"><span>Recibo No.</span><span id="rc-consecutivo" class="font-bold">0001</span></div>
-                        <div class="flex justify-between p-0.5 px-1"><span>Fecha Recibo</span><span id="rc-fecha">04/03/2026</span></div>
+                        <div class="flex justify-between p-0.5 px-1"><span>Fecha</span><span id="rc-fecha">04/03/2026</span></div>
                     </div>
                 </div>
 
