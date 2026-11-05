@@ -75,7 +75,7 @@
     <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-grow p-4 max-w-5xl mx-auto w-full">
 
-        <!-- 0. VISTA PÚBLICA / PRESENTACIÓN INICIAL (Sin mostrar información sensible) -->
+        <!-- 0. VISTA PÚBLICA / PRESENTACIÓN INICIAL -->
         <section id="view-inicio" class="view-section view-active space-y-6">
             <div class="bg-gradient-to-r from-sky-600 to-teal-600 text-white p-8 rounded-2xl shadow-lg space-y-4">
                 <h1 class="text-3xl font-extrabold tracking-tight">Tu Bienestar y Protección al Día</h1>
@@ -105,7 +105,7 @@
             </div>
         </section>
 
-        <!-- 1. VISTA LISTADO Y EDICIÓN (Protegida) -->
+        <!-- 1. VISTA LISTADO Y EDICIÓN -->
         <section id="view-clientes" class="view-section space-y-4">
             <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <div>
@@ -306,7 +306,7 @@
                 <div class="text-center pt-3 font-bold text-[11px] text-black tracking-widest">USUARIO</div>
             </div>
 
-            <!-- BOTONES DE ACCIÓN (Descargar PDF Oficial + Enviar WhatsApp sin mostrar número) -->
+            <!-- BOTONES DE ACCIÓN -->
             <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-2">
                 <button onclick="downloadRealPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1 w-full sm:w-auto justify-center">
                     <span>📥 Descargar PDF Oficial</span>
@@ -476,17 +476,31 @@
         let currentReceiptClient = null;
         let currentReceiptMes = "";
 
-        // Generar recibo con combo de meses, validación y consecutivo único en Firestore
+        // Generar recibo con combo de meses, validación, consecutivo único y año+mes en el campo servicio
         window.promptAndOpenReceiptEncoded = async function(encodedStr) {
             if (!confirm("¿Estás seguro de generar este recibo?")) return;
 
             const client = JSON.parse(decodeURIComponent(encodedStr));
             currentReceiptClient = client;
 
-            const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+            const mesesObj = [
+                { nombre: "ENERO", num: "01" },
+                { nombre: "FEBRERO", num: "02" },
+                { nombre: "MARZO", num: "03" },
+                { nombre: "ABRIL", num: "04" },
+                { nombre: "MAYO", num: "05" },
+                { nombre: "JUNIO", num: "06" },
+                { nombre: "JULIO", num: "07" },
+                { nombre: "AGOSTO", num: "08" },
+                { nombre: "SEPTIEMBRE", num: "09" },
+                { nombre: "OCTUBRE", num: "10" },
+                { nombre: "NOVIEMBRE", num: "11" },
+                { nombre: "DICIEMBRE", num: "12" }
+            ];
+
             const mesActualNombre = new Date().toLocaleString('es', { month: 'long' }).toUpperCase();
             
-            let opcionesHTML = meses.map(m => `<option value="${m}" ${m === mesActualNombre ? 'selected' : ''}>${m}</option>`).join('');
+            let opcionesHTML = mesesObj.map(m => `<option value="${m.nombre}" data-num="${m.num}" ${m.nombre === mesActualNombre ? 'selected' : ''}>${m.nombre}</option>`).join('');
             
             const promptHTML = `
                 <div id="mesModalPrompt" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -504,11 +518,13 @@
             
             document.body.insertAdjacentHTML('beforeend', promptHTML);
 
-            const selectedMes = await new Promise((resolve) => {
+            const resultadoMes = await new Promise((resolve) => {
                 document.getElementById('btnOkMes').onclick = () => {
-                    const val = document.getElementById('selectMesPrompt').value;
+                    const selectEl = document.getElementById('selectMesPrompt');
+                    const nombreMes = selectEl.value;
+                    const numMes = selectEl.options[selectEl.selectedIndex].getAttribute('data-num');
                     document.getElementById('mesModalPrompt').remove();
-                    resolve(val);
+                    resolve({ nombre: nombreMes, num: numMes });
                 };
                 document.getElementById('btnCancelMes').onclick = () => {
                     document.getElementById('mesModalPrompt').remove();
@@ -516,8 +532,8 @@
                 };
             });
 
-            if (!selectedMes) return;
-            currentReceiptMes = selectedMes;
+            if (!resultadoMes) return;
+            currentReceiptMes = resultadoMes.nombre;
 
             // Obtener y actualizar consecutivo único en Firestore
             let nuevoConsecutivo = "0001";
@@ -536,8 +552,12 @@
             }
 
             const fechaAhora = new Date();
+            const anioActual = fechaAhora.getFullYear();
             const fechaFormateada = fechaAhora.toLocaleDateString('es-CO');
             
+            // Código de servicio dinámico basado en año y mes seleccionado (ej. 202603)
+            const servicioAnioMes = `${anioActual}${resultadoMes.num}`;
+
             document.getElementById('rc-consecutivo').innerText = nuevoConsecutivo;
             document.getElementById('rc-fecha').innerText = fechaFormateada;
             document.getElementById('rc-nombre').innerText = client.nombre;
@@ -547,7 +567,7 @@
             document.getElementById('rc-eps').innerText = client.eps || "SURA";
             document.getElementById('rc-pension').innerText = client.pension || "N/A";
             document.getElementById('rc-arl').innerText = client.arl || "POSITIVA";
-            document.getElementById('rc-tipo-serv').innerText = "202603";
+            document.getElementById('rc-tipo-serv').innerText = servicioAnioMes;
             
             document.getElementById('rc-mes').innerText = currentReceiptMes;
             document.getElementById('rc-concepto').innerText = `APORTES SEGURIDAD SOCIAL ${currentReceiptMes}`;
