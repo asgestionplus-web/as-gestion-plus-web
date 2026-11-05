@@ -24,7 +24,7 @@
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- Estilos CSS Definitivos para Impresión Limpia y sin Cortes -->
+    <!-- Estilos CSS Optimizados (Ideal para PC y Vista Previa Móvil) -->
     <style>
         .view-section { display: none !important; }
         .view-active { display: block !important; }
@@ -46,7 +46,6 @@
                 background-color: #ffffff !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                overflow: visible !important;
             }
             body * { visibility: hidden !important; }
             #receiptPrintArea, #receiptPrintArea * { visibility: visible !important; }
@@ -62,8 +61,6 @@
                 padding: 10px !important;
                 margin: 0 !important;
                 box-shadow: none !important;
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
             }
         }
     </style>
@@ -73,7 +70,6 @@
     <!-- HEADER / NAVEGACIÓN -->
     <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 px-6 py-2 flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <!-- Logotipo SVG Vectorial Nativo -->
             <svg viewBox="0 0 220 70" class="h-12 w-auto">
                 <defs>
                     <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -191,12 +187,12 @@
 
     </main>
 
-    <!-- MODAL DE RECIBO PDF -->
+    <!-- MODAL DE VISTA PREVIA Y ENVÍO A WHATSAPP -->
     <div id="receiptModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 overflow-y-auto">
-        <div class="bg-white w-full max-w-2xl rounded-xl p-3 relative shadow-2xl my-4">
+        <div class="bg-white w-full max-w-xl rounded-xl p-3 relative shadow-2xl my-4">
             <button onclick="closeReceiptModal()" class="absolute top-2 right-2 text-slate-400 hover:text-slate-700 font-bold text-lg z-10">✕</button>
             
-            <!-- ÁREA DE IMPRESIÓN -->
+            <!-- ÁREA DE RECIBO (Perfecto para PC y vista en pantalla móvil) -->
             <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-2 border-black p-3 text-xs space-y-2.5 w-full">
                 
                 <!-- Encabezado con Logo SVG Directo y Cuadro Compacto Exacto -->
@@ -216,7 +212,6 @@
                             <p class="text-[10px] text-blue-800 font-medium">E- Mail: asgestionplus@gmail.com</p>
                         </div>
                     </div>
-                    <!-- Cuadro de Recibo Compacto y Fijo sin desbordarse -->
                     <div class="border border-black w-36 text-[10px] text-black shrink-0">
                         <div class="flex justify-between border-b border-black p-0.5 px-1"><span>Recibo No.</span><span id="rc-consecutivo" class="font-bold">0001</span></div>
                         <div class="flex justify-between p-0.5 px-1"><span>Fecha</span><span id="rc-fecha">04/03/2026</span></div>
@@ -307,8 +302,12 @@
                 <div class="text-center pt-2 font-bold text-[10px] text-black tracking-widest">USUARIO</div>
             </div>
 
-            <div class="mt-3 flex justify-end space-x-2">
-                <button onclick="downloadPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-5 py-2 rounded-lg text-xs font-semibold shadow-sm transition">🖨️ Generar / Descargar PDF Oficial</button>
+            <!-- BOTONES DE ACCIÓN (Imprimir PC / Enviar WhatsApp Móvil) -->
+            <div class="mt-3 flex justify-between items-center space-x-2">
+                <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition">🖨️ Imprimir (PC)</button>
+                <button onclick="sendReceiptWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1.5">
+                    <span>💬 Enviar por WhatsApp</span>
+                </button>
             </div>
         </div>
     </div>
@@ -431,7 +430,7 @@
                         </div>
                         <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
                             <button onclick='window.editClientEncoded("${clientStr}")' class="bg-amber-500 hover:bg-amber-400 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Editar</button>
-                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Recibo PDF</button>
+                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Recibo PDF / Wp</button>
                         </div>
                     </div>
                 `;
@@ -468,13 +467,17 @@
             document.getElementById('formTitle').innerText = "Registrar Nuevo Cliente";
         };
 
+        let currentReceiptClient = null;
+        let currentReceiptMes = "";
+
         window.promptAndOpenReceiptEncoded = function(encodedStr) {
             const client = JSON.parse(decodeURIComponent(encodedStr));
+            currentReceiptClient = client;
             const mesActual = new Date().toLocaleString('es', { month: 'long' }).toUpperCase();
             const mesIngresado = prompt("Ingrese el mes del periodo de cotización (Ej: MARZO, ABRIL):", mesActual);
             if (!mesIngresado) return;
 
-            const mesUpper = mesIngresado.trim().toUpperCase();
+            currentReceiptMes = mesIngresado.trim().toUpperCase();
             const fechaAhora = new Date();
             const fechaFormateada = fechaAhora.toLocaleDateString('es-CO');
             
@@ -489,8 +492,8 @@
             document.getElementById('rc-arl').innerText = client.arl || "POSITIVA";
             document.getElementById('rc-tipo-serv').innerText = "202603";
             
-            document.getElementById('rc-mes').innerText = mesUpper;
-            document.getElementById('rc-concepto').innerText = `APORTES SEGURIDAD SOCIAL ${mesUpper}`;
+            document.getElementById('rc-mes').innerText = currentReceiptMes;
+            document.getElementById('rc-concepto').innerText = `APORTES SEGURIDAD SOCIAL ${currentReceiptMes}`;
             
             const valorFmt = (client.valor || 0).toLocaleString('es-CO');
             document.getElementById('rc-valor1').innerText = valorFmt;
@@ -503,8 +506,41 @@
             document.getElementById('receiptModal').classList.add('hidden');
         };
 
-        window.downloadPDF = function() {
-            window.print();
+        // Función para enviar el recibo redactado limpiamente por WhatsApp
+        window.sendReceiptWhatsApp = function() {
+            if (!currentReceiptClient) return;
+            const c = currentReceiptClient;
+            const valorFmt = (c.valor || 0).toLocaleString('es-CO');
+            const fechaHoy = new Date().toLocaleDateString('es-CO');
+
+            let msg = `*A&S GESTION COMERCIAL PLUS SAS*\n`;
+            msg += `NIT. 902.028.894-1 | Cel. 3235536049\n`;
+            msg += `────────────────────────\n`;
+            msg += `📋 *COMPROBANTE DE PAGO N° 0001*\n`;
+            msg += `📅 Fecha: ${fechaHoy}\n\n`;
+            msg += `👤 *Asociado:* ${c.nombre}\n`;
+            msg += `🆔 *Identidad:* ${c.cedula}\n`;
+            msg += `📍 *Dirección:* ${c.direccion || 'ARMENIA'}\n`;
+            msg += `📞 *Celular:* ${c.celular || 'N/A'}\n\n`;
+            msg += `📊 *DATOS DE COTIZACIÓN (${currentReceiptMes})*\n`;
+            msg += `• E.P.S: ${c.eps || 'SURA'}\n`;
+            msg += `• A.F.P: ${c.pension || 'N/A'}\n`;
+            msg += `• A.R.L: ${c.arl || 'POSITIVA'}\n`;
+            msg += `• Periodo: ${currentReceiptMes}\n\n`;
+            msg += `💰 *DETALLE DEL PAGO*\n`;
+            msg += `• Concepto: Aportes Seguridad Social ${currentReceiptMes}\n`;
+            msg += `• *TOTAL PAGADO: $ ${valorFmt}*\n\n`;
+            msg += `✅ _¡Gracias por confiar en nuestros servicios!_`;
+
+            // Limpiar número de celular por si tiene espacios o prefijos
+            let phone = (c.celular || '').replace(/\D/g, '');
+            if (phone.length === 10 && !phone.startsWith('57')) {
+                phone = '57' + phone; // Formato Colombia por defecto si aplica
+            }
+
+            const encodedMsg = encodeURIComponent(msg);
+            const waUrl = phone ? `https://wa.me/${phone}?text=${encodedMsg}` : `https://wa.me/?text=${encodedMsg}`;
+            window.open(waUrl, '_blank');
         };
 
         let inactivityTimer;
