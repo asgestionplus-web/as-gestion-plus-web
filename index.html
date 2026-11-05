@@ -24,18 +24,18 @@
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- Failsafe CSS Nativo y Reglas de Impresión de Página Única -->
+    <!-- Failsafe CSS Nativo y Corrección Definitiva de Impresión en 1 Sola Página -->
     <style>
         .view-section { display: none !important; }
         .view-active { display: block !important; }
         body { background-color: #f1f5f9; color: #1e293b; font-family: system-ui, -apple-system, sans-serif; }
         .fail-safe-box { border: 1px solid #cbd5e1; background: #ffffff; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        /* Reglas de Impresión Estrictas para una Sola Página (PC y Celular) */
+        /* Reglas de Impresión Infalibles para PC y Celular (1 Sola Página sin recortes) */
         @media print {
-            @page {
-                size: letter portrait;
-                margin: 10mm;
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             body, html {
                 width: 100% !important;
@@ -43,20 +43,25 @@
                 background-color: #ffffff !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                overflow: hidden !important;
             }
             body * { visibility: hidden !important; }
             #receiptPrintArea, #receiptPrintArea * { visibility: visible !important; }
             #receiptPrintArea {
-                position: fixed !important;
+                position: absolute !important;
                 left: 0 !important;
                 top: 0 !important;
                 width: 100% !important;
                 max-width: 100% !important;
+                height: auto !important;
                 background-color: #ffffff !important;
                 color: #000000 !important;
                 border: 2px solid #000 !important;
-                padding: 10px !important;
+                padding: 15px !important;
+                margin: 0 !important;
                 box-shadow: none !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
         }
     </style>
@@ -189,7 +194,7 @@
         <div class="bg-white w-full max-w-3xl rounded-xl p-4 relative shadow-2xl my-8">
             <button onclick="closeReceiptModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 font-bold text-lg">✕</button>
             
-            <!-- ÁREA DE IMPRESIÓN (Una sola página exacta) -->
+            <!-- ÁREA DE IMPRESIÓN (Optimizada para 1 sola página exacta) -->
             <div id="receiptPrintArea" style="background-color: #ffffff !important; color: #000000 !important; font-family: Arial, sans-serif !important;" class="border-2 border-black p-4 text-xs space-y-2">
                 
                 <!-- Encabezado con Logo SVG Directo -->
