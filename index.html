@@ -139,27 +139,29 @@
 
     </main>
 
-    <!-- MODAL DE RECIBO PDF -->
+    <!-- MODAL DE RECIBO PDF (Estilo Plantilla Alta Visibilidad) -->
     <div id="receiptModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-2 overflow-y-auto">
-        <div class="bg-white text-slate-900 w-full max-w-2xl rounded p-6 relative shadow-2xl my-8">
-            <button onclick="closeReceiptModal()" class="absolute top-3 right-3 text-slate-500 hover:text-black font-bold text-lg">✕</button>
+        <div class="bg-slate-900 text-slate-900 w-full max-w-2xl rounded p-4 relative shadow-2xl my-8">
+            <button onclick="closeReceiptModal()" class="absolute top-2 right-3 text-white hover:text-red-400 font-bold text-lg">✕</button>
             
-            <div id="receiptContent" class="border-2 border-slate-800 p-4 bg-white text-xs space-y-3">
-                <div class="flex justify-between items-start border-b border-slate-400 pb-3">
+            <!-- Contenedor con fondo blanco puro y tipografía oscura para evitar PDFs en blanco -->
+            <div id="receiptContent" style="background-color: #ffffff !important; color: #000000 !important;" class="border-2 border-black p-4 text-xs space-y-3">
+                <div class="flex justify-between items-start border-b border-black pb-3">
                     <div>
                         <h1 class="font-bold text-sm text-blue-900">A&S GESTION COMERCIAL PLUS SAS</h1>
-                        <p class="text-[10px]">NIT.902.028.894-1</p>
-                        <p class="text-[10px]">Cel. 3235536049</p>
+                        <p class="text-[10px] text-black">NIT.902.028.894-1</p>
+                        <p class="text-[10px] text-black">Cel. 3235536049</p>
                         <p class="text-[10px] text-blue-700">E- Mail: asgestionplus@gmail.com</p>
                     </div>
-                    <div class="border border-slate-400 p-1 w-48 text-[10px]">
-                        <div class="flex justify-between border-b border-slate-300 pb-0.5"><span>Recibo No.</span><span id="rc-consecutivo" class="font-bold">0001</span></div>
+                    <div class="border border-black p-1 w-48 text-[10px] text-black">
+                        <div class="flex justify-between border-b border-black pb-0.5"><span>Recibo No.</span><span id="rc-consecutivo" class="font-bold">0001</span></div>
                         <div class="flex justify-between pt-0.5"><span>Fecha Recibo</span><span id="rc-fecha">2026-03-04</span></div>
                     </div>
                 </div>
 
-                <div class="border border-slate-400 p-2 space-y-1">
-                    <p class="font-bold text-[11px] text-slate-700">Datos del Cliente</p>
+                <!-- Datos Cliente -->
+                <div class="border border-black p-2 space-y-1 text-black">
+                    <p class="font-bold text-[11px]">Datos del Cliente</p>
                     <div class="grid grid-cols-2 gap-2">
                         <div>Asociado: <span id="rc-nombre" class="font-semibold uppercase"></span></div>
                         <div>Identidad: <span id="rc-cedula" class="font-semibold"></span></div>
@@ -170,49 +172,51 @@
                     </div>
                 </div>
 
-                <div class="border border-slate-400 p-2 space-y-1">
-                    <p class="font-bold text-[11px] text-slate-700">Datos Cotización</p>
-                    <table class="w-full border-collapse border border-slate-300 text-center text-[10px]">
-                        <tr class="bg-slate-100">
-                            <th class="border border-slate-300 p-1">Administradora</th>
-                            <th class="border border-slate-300 p-1">Periodo Cot.</th>
-                            <th class="border border-slate-300 p-1">Servicio</th>
-                            <th class="border border-slate-300 p-1">Dias</th>
+                <!-- Datos Cotización -->
+                <div class="border border-black p-2 space-y-1 text-black">
+                    <p class="font-bold text-[11px]">Datos Cotización</p>
+                    <table class="w-full border-collapse border border-black text-center text-[10px]">
+                        <tr class="bg-gray-100">
+                            <th class="border border-black p-1">Administradora</th>
+                            <th class="border border-black p-1">Periodo Cot.</th>
+                            <th class="border border-black p-1">Servicio</th>
+                            <th class="border border-black p-1">Dias</th>
                         </tr>
                         <tr>
-                            <td class="border border-slate-300 p-1 text-left">E.P.S: <span id="rc-eps"></span></td>
-                            <td rowspan="3" class="border border-slate-300 p-1 font-bold uppercase" id="rc-mes">MARZO</td>
-                            <td rowspan="3" class="border border-slate-300 p-1" id="rc-tipo-serv">202603</td>
-                            <td rowspan="3" class="border border-slate-300 p-1">30</td>
+                            <td class="border border-black p-1 text-left">E.P.S: <span id="rc-eps"></span></td>
+                            <td rowspan="3" class="border border-black p-1 font-bold uppercase" id="rc-mes">MARZO</td>
+                            <td rowspan="3" class="border border-black p-1" id="rc-tipo-serv">202603</td>
+                            <td rowspan="3" class="border border-black p-1">30</td>
                         </tr>
-                        <tr><td class="border border-slate-300 p-1 text-left">A.F.P: <span id="rc-pension">N/A</span></td></tr>
-                        <tr><td class="border border-slate-300 p-1 text-left">A.R.L: <span id="rc-arl">POSITIVA</span> 1</td></tr>
+                        <tr><td class="border border-black p-1 text-left">A.F.P: <span id="rc-pension">N/A</span></td></tr>
+                        <tr><td class="border border-black p-1 text-left">A.R.L: <span id="rc-arl">POSITIVA</span> 1</td></tr>
                         <tr>
-                            <td colspan="2" class="border border-slate-300 p-1 text-left font-bold">I.B.C</td>
-                            <td colspan="2" class="border border-slate-300 p-1 text-right font-bold">$ 1.750.905</td>
+                            <td colspan="2" class="border border-black p-1 text-left font-bold">I.B.C</td>
+                            <td colspan="2" class="border border-black p-1 text-right font-bold">$ 1.750.905</td>
                         </tr>
                     </table>
                 </div>
 
-                <div class="border border-slate-400 p-2 space-y-1">
-                    <p class="font-bold text-[11px] text-slate-700">Detalle Recibo</p>
-                    <table class="w-full border-collapse border border-slate-300 text-[10px]">
-                        <tr class="bg-slate-100">
-                            <th class="border border-slate-300 p-1 text-left">Concepto</th>
-                            <th class="border border-slate-300 p-1 text-right w-32">Valor</th>
+                <!-- Detalle Recibo -->
+                <div class="border border-black p-2 space-y-1 text-black">
+                    <p class="font-bold text-[11px]">Detalle Recibo</p>
+                    <table class="w-full border-collapse border border-black text-[10px]">
+                        <tr class="bg-gray-100">
+                            <th class="border border-black p-1 text-left">Concepto</th>
+                            <th class="border border-black p-1 text-right w-32">Valor</th>
                         </tr>
                         <tr>
-                            <td class="border border-slate-300 p-1 uppercase" id="rc-concepto">APORTES SEGURIDAD SOCIAL MARZO</td>
-                            <td class="border border-slate-300 p-1 text-right" id="rc-valor1">$ 0</td>
+                            <td class="border border-black p-1 uppercase" id="rc-concepto">APORTES SEGURIDAD SOCIAL MARZO</td>
+                            <td class="border border-black p-1 text-right font-bold" id="rc-valor1">$ 0</td>
                         </tr>
-                        <tr style="height: 24px;"><td class="border border-slate-300"></td><td class="border border-slate-300"></td></tr>
+                        <tr style="height: 24px;"><td class="border border-black"></td><td class="border border-black"></td></tr>
                     </table>
                     <div class="flex justify-between items-center font-bold pt-1">
                         <span>FORMA DE PAGO</span>
                         <div class="flex space-x-4"><span>TOTAL</span> <span id="rc-total">$ 0</span></div>
                     </div>
                 </div>
-                <div class="text-center pt-2 font-bold text-[10px] text-slate-600">USUARIO</div>
+                <div class="text-center pt-2 font-bold text-[10px] text-black">USUARIO</div>
             </div>
 
             <div class="mt-4 flex justify-end space-x-2">
@@ -226,7 +230,7 @@
         A&S Gestión Comercial Plus SAS © 2026 - PWA Resiliente
     </footer>
 
-    <!-- SCRIPTS FIREBASE (SDK v13.2.0 Modular) Y LÓGICA -->
+    <!-- SCRIPTS FIREBASE & LÓGICA -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
@@ -275,7 +279,6 @@
 
         flatpickr("#reg-fnac", { dateFormat: "Y-m-d", theme: "dark" });
 
-        // Precarga de los 15 Clientes
         window.seedDatabase = async function() {
             const initialClients = [
                 { cedula: "42102471", nombre: "YINET GRAJALES PODADA" },
@@ -315,7 +318,7 @@
                     }, { merge: true });
                 });
                 await batch.commit();
-                alert("¡Se han precargado los 15 clientes correctamente! Ya puedes editarlos.");
+                alert("¡Se han precargado los 15 clientes correctamente!");
                 loadClients();
             } catch (e) {
                 alert("Error al precargar: " + e.message);
@@ -384,7 +387,7 @@
                     </div>
                     <div class="flex justify-end space-x-2 pt-2 border-t border-slate-700">
                         <button onclick='window.editClient(${JSON.stringify(c)})' class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1 rounded text-xs font-medium">Editar</button>
-                        <button onclick='window.openReceipt(${JSON.stringify(c)})' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-xs font-medium">Recibo PDF</button>
+                        <button onclick='window.promptAndOpenReceipt(${JSON.stringify(c)})' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded text-xs font-medium">Recibo PDF</button>
                     </div>
                 </div>
             `).join('');
@@ -419,7 +422,14 @@
             document.getElementById('formTitle').innerText = "Registrar Nuevo Cliente";
         };
 
-        window.openReceipt = function(client) {
+        // Solicita el mes antes de abrir el modal del recibo PDF
+        window.promptAndOpenReceipt = function(client) {
+            const mesActual = new Date().toLocaleString('es', { month: 'uppercase' });
+            const mesIngresado = prompt("Ingrese el mes del periodo de cotización (Ej: MARZO, ABRIL, MAYO):", mesActual);
+            if (!mesIngresado) return; // Si cancela, no hace nada
+
+            const mesUpper = mesIngresado.trim().toUpperCase();
+            
             document.getElementById('rc-consecutivo').innerText = "0001";
             document.getElementById('rc-fecha').innerText = new Date().toLocaleDateString();
             document.getElementById('rc-nombre').innerText = client.nombre;
@@ -430,9 +440,15 @@
             document.getElementById('rc-pension').innerText = client.pension || "N/A";
             document.getElementById('rc-arl').innerText = client.arl || "POSITIVA";
             document.getElementById('rc-tipo-serv').innerText = client.cedula.slice(-6);
-            document.getElementById('rc-concepto').innerText = `APORTES SEGURIDAD SOCIAL - ${client.nombre.toUpperCase()}`;
-            document.getElementById('rc-valor1').innerText = `$ ${client.valor.toLocaleString()}`;
-            document.getElementById('rc-total').innerText = `$ ${client.valor.toLocaleString()}`;
+            
+            // Asignación del mes ingresado en Periodo y Concepto
+            document.getElementById('rc-mes').innerText = mesUpper;
+            document.getElementById('rc-concepto').innerText = `APORTES SEGURIDAD SOCIAL ${mesUpper}`;
+            
+            const valorFmt = `$ ${client.valor.toLocaleString()}`;
+            document.getElementById('rc-valor1').innerText = valorFmt;
+            document.getElementById('rc-total').innerText = valorFmt;
+            
             document.getElementById('receiptModal').classList.remove('hidden');
         };
 
