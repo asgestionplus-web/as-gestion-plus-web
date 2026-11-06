@@ -306,13 +306,18 @@
                 <div class="text-center pt-3 font-bold text-[11px] text-black tracking-widest">USUARIO</div>
             </div>
 
-            <!-- BOTONES DE ACCIÓN -->
+            <!-- BOTONES DE ACCIÓN (Incluye botón de cerrar / volver a gestión) -->
             <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-                <button onclick="downloadRealPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1 w-full sm:w-auto justify-center">
-                    <span>📥 Descargar PDF Oficial</span>
-                </button>
-                <button onclick="sendReceiptWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1 w-full sm:w-auto justify-center">
-                    <span>💬 Enviar por WhatsApp</span>
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <button onclick="downloadRealPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center justify-center space-x-1">
+                        <span>📥 Descargar PDF Oficial</span>
+                    </button>
+                    <button onclick="sendReceiptWhatsApp()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center justify-center space-x-1">
+                        <span>💬 Enviar por WhatsApp</span>
+                    </button>
+                </div>
+                <button onclick="closeReceiptModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-lg text-xs font-semibold transition w-full sm:w-auto text-center">
+                    ✕ Cerrar / Volver a Clientes
                 </button>
             </div>
         </div>
@@ -476,7 +481,6 @@
         let currentReceiptClient = null;
         let currentReceiptMes = "";
 
-        // Generar recibo con combo de meses, validación, consecutivo único y año+mes en el campo servicio
         window.promptAndOpenReceiptEncoded = async function(encodedStr) {
             if (!confirm("¿Estás seguro de generar este recibo?")) return;
 
@@ -535,7 +539,6 @@
             if (!resultadoMes) return;
             currentReceiptMes = resultadoMes.nombre;
 
-            // Obtener y actualizar consecutivo único en Firestore
             let nuevoConsecutivo = "0001";
             try {
                 const refConfig = doc(db, "config", "consecutivo");
@@ -554,8 +557,6 @@
             const fechaAhora = new Date();
             const anioActual = fechaAhora.getFullYear();
             const fechaFormateada = fechaAhora.toLocaleDateString('es-CO');
-            
-            // Código de servicio dinámico basado en año y mes seleccionado (ej. 202603)
             const servicioAnioMes = `${anioActual}${resultadoMes.num}`;
 
             document.getElementById('rc-consecutivo').innerText = nuevoConsecutivo;
@@ -583,7 +584,6 @@
             document.getElementById('receiptModal').classList.add('hidden');
         };
 
-        // Descargar PDF Real con diseño exacto
         window.downloadRealPDF = async function() {
             const { jsPDF } = window.jspdf;
             const element = document.getElementById('receiptPrintArea');
@@ -603,7 +603,6 @@
             }
         };
 
-        // Enviar por WhatsApp con número fijo predeterminado oculto
         window.sendReceiptWhatsApp = function() {
             if (!currentReceiptClient) return;
             const c = currentReceiptClient;
