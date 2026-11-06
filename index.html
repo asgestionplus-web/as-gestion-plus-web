@@ -171,7 +171,7 @@
                     <input type="number" id="reg-valor" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:bg-white" value="122222">
                 </div>
                 <div class="sm:col-span-2 flex justify-between space-x-3 pt-2">
-                    <button type="button" onclick="resetForm()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-lg font-medium transition">Cancelar</button>
+                    <button type="button" onclick="cancelForm()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2.5 rounded-lg font-medium transition">Cancelar</button>
                     <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white px-6 py-2.5 rounded-lg font-medium transition shadow-sm">Guardar Cliente</button>
                 </div>
             </form>
@@ -306,7 +306,7 @@
                 <div class="text-center pt-3 font-bold text-[11px] text-black tracking-widest">USUARIO</div>
             </div>
 
-            <!-- BOTONES DE ACCIÓN (Incluye botón de cerrar / volver a gestión) -->
+            <!-- BOTONES DE ACCIÓN -->
             <div class="mt-4 flex flex-col sm:flex-row justify-between items-center gap-2">
                 <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     <button onclick="downloadRealPDF()" class="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-lg text-xs font-semibold shadow-sm transition flex items-center justify-center space-x-1">
@@ -333,7 +333,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC5-Q3I0GhRIj1X_fyY6Lpb4jQ2BNA4MoI",
@@ -406,6 +406,18 @@
             }
         };
 
+        // Función para eliminar cliente de Firestore
+        window.deleteClient = async function(cedula) {
+            if (!confirm(`¿Está seguro de eliminar al cliente con cédula ${cedula}?`)) return;
+            try {
+                await deleteDoc(doc(db, "clientes", cedula));
+                alert("Cliente eliminado correctamente.");
+                loadClients();
+            } catch (err) {
+                alert("Error al eliminar: " + err.message);
+            }
+        };
+
         let allClientsCache = [];
         async function loadClients() {
             const container = document.getElementById('clientsContainer');
@@ -440,8 +452,9 @@
                             <p class="text-sm font-bold text-emerald-600 mt-2">Valor: $${(c.valor || 0).toLocaleString('es-CO')}</p>
                         </div>
                         <div class="flex justify-end space-x-2 pt-2 border-t border-slate-100">
-                            <button onclick='window.editClientEncoded("${clientStr}")' class="bg-amber-500 hover:bg-amber-400 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Editar</button>
-                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Generar Recibo</button>
+                            <button onclick='window.editClientEncoded("${clientStr}")' class="bg-amber-500 hover:bg-amber-400 text-white px-3 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Editar</button>
+                            <button onclick='window.promptAndOpenReceiptEncoded("${clientStr}")' class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Generar Recibo</button>
+                            <button onclick='window.deleteClient("${c.cedula}")' class="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium shadow-sm transition">Eliminar</button>
                         </div>
                     </div>
                 `;
@@ -476,6 +489,12 @@
             document.getElementById('clientForm').reset();
             document.getElementById('reg-cedula').readOnly = false;
             document.getElementById('formTitle').innerText = "Registrar Nuevo Cliente";
+        };
+
+        // Función para el botón Cancelar (tanto en nuevo como en edición) que regresa a la lista de clientes
+        window.cancelForm = function() {
+            window.resetForm();
+            window.switchView('view-clientes');
         };
 
         let currentReceiptClient = null;
